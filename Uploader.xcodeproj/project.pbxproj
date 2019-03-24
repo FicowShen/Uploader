@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6AA9E33D22478CE30064D799 /* TaskTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AA9E33C22478CE30064D799 /* TaskTableViewController.swift */; };
+		6AA9E340224793720064D799 /* TaskTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AA9E33E224793720064D799 /* TaskTableViewCell.swift */; };
+		6AA9E341224793720064D799 /* TaskTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6AA9E33F224793720064D799 /* TaskTableViewCell.xib */; };
 		89F215982244B8B8006675F7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89F215972244B8B8006675F7 /* AppDelegate.swift */; };
 		89F2159A2244B8B8006675F7 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89F215992244B8B8006675F7 /* ViewController.swift */; };
 		89F2159D2244B8B8006675F7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 89F2159B2244B8B8006675F7 /* Main.storyboard */; };
@@ -35,6 +38,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		6AA9E33C22478CE30064D799 /* TaskTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTableViewController.swift; sourceTree = "<group>"; };
+		6AA9E33E224793720064D799 /* TaskTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTableViewCell.swift; sourceTree = "<group>"; };
+		6AA9E33F224793720064D799 /* TaskTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TaskTableViewCell.xib; sourceTree = "<group>"; };
 		89F215942244B8B8006675F7 /* Uploader.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Uploader.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		89F215972244B8B8006675F7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		89F215992244B8B8006675F7 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -76,6 +82,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		6AA9E342224793AF0064D799 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				89F2159E2244B8B9006675F7 /* Assets.xcassets */,
+				89F215A02244B8B9006675F7 /* LaunchScreen.storyboard */,
+			);
+			path = "Supporting Files";
+			sourceTree = "<group>";
+		};
 		89F2158B2244B8B8006675F7 = {
 			isa = PBXGroup;
 			children = (
@@ -99,13 +114,15 @@
 		89F215962244B8B8006675F7 /* Uploader */ = {
 			isa = PBXGroup;
 			children = (
+				89F215A32244B8B9006675F7 /* Info.plist */,
+				6AA9E342224793AF0064D799 /* Supporting Files */,
 				89F215972244B8B8006675F7 /* AppDelegate.swift */,
 				89F215992244B8B8006675F7 /* ViewController.swift */,
 				89F2159B2244B8B8006675F7 /* Main.storyboard */,
-				89F2159E2244B8B9006675F7 /* Assets.xcassets */,
-				89F215A02244B8B9006675F7 /* LaunchScreen.storyboard */,
-				89F215A32244B8B9006675F7 /* Info.plist */,
 				89F215C52244B8D5006675F7 /* UploadManager.swift */,
+				6AA9E33C22478CE30064D799 /* TaskTableViewController.swift */,
+				6AA9E33E224793720064D799 /* TaskTableViewCell.swift */,
+				6AA9E33F224793720064D799 /* TaskTableViewCell.xib */,
 			);
 			path = Uploader;
 			sourceTree = "<group>";
@@ -232,6 +249,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6AA9E341224793720064D799 /* TaskTableViewCell.xib in Resources */,
 				89F215A22244B8B9006675F7 /* LaunchScreen.storyboard in Resources */,
 				89F2159F2244B8B9006675F7 /* Assets.xcassets in Resources */,
 				89F2159D2244B8B8006675F7 /* Main.storyboard in Resources */,
@@ -261,7 +279,9 @@
 			files = (
 				89F2159A2244B8B8006675F7 /* ViewController.swift in Sources */,
 				89F215982244B8B8006675F7 /* AppDelegate.swift in Sources */,
+				6AA9E340224793720064D799 /* TaskTableViewCell.swift in Sources */,
 				89F215C62244B8D5006675F7 /* UploadManager.swift in Sources */,
+				6AA9E33D22478CE30064D799 /* TaskTableViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -437,7 +457,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 2JVZ3VZ64M;
+				DEVELOPMENT_TEAM = 3JF38H23W8;
 				INFOPLIST_FILE = Uploader/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -455,7 +475,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 2JVZ3VZ64M;
+				DEVELOPMENT_TEAM = 3JF38H23W8;
 				INFOPLIST_FILE = Uploader/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

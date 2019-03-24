@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="bKZ-wZ-Sfm">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -19,54 +19,30 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="OVO-Vl-LcO">
-                                <rect key="frame" x="87.5" y="235" width="200" height="197"/>
+                                <rect key="frame" x="101" y="276" width="173" height="115"/>
                                 <subviews>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8wf-hX-hSB">
-                                        <rect key="frame" x="0.0" y="0.0" width="200" height="64"/>
-                                        <subviews>
-                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Doing nothing" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="g3f-pg-Lhg">
-                                                <rect key="frame" x="0.0" y="0.0" width="200" height="20.5"/>
-                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                <nil key="textColor"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
-                                        </subviews>
-                                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                        <constraints>
-                                            <constraint firstAttribute="trailing" secondItem="g3f-pg-Lhg" secondAttribute="trailing" id="MXa-Ux-W1o"/>
-                                            <constraint firstItem="g3f-pg-Lhg" firstAttribute="top" secondItem="8wf-hX-hSB" secondAttribute="top" id="NSm-ae-r0K"/>
-                                            <constraint firstAttribute="height" constant="64" id="rUS-mN-PUD"/>
-                                            <constraint firstItem="g3f-pg-Lhg" firstAttribute="leading" secondItem="8wf-hX-hSB" secondAttribute="leading" id="w7r-kN-dlf"/>
-                                        </constraints>
-                                    </view>
-                                    <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="lc2-NP-C13">
-                                        <rect key="frame" x="0.0" y="72" width="200" height="2"/>
-                                        <constraints>
-                                            <constraint firstAttribute="width" constant="200" id="qXQ-Gy-Sak"/>
-                                        </constraints>
-                                    </progressView>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZKw-0V-eJ1">
-                                        <rect key="frame" x="0.0" y="82" width="200" height="33"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RQn-xd-p17">
+                                        <rect key="frame" x="0.0" y="0.0" width="173" height="33"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <state key="normal" title="Single Task"/>
+                                        <state key="normal" title="Normal Upload Scene"/>
                                         <connections>
-                                            <action selector="buttonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="mit-c1-DRB"/>
+                                            <action selector="buttonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="JOT-OY-KPW"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZKw-0V-eJ1">
+                                        <rect key="frame" x="0.0" y="41" width="173" height="33"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <state key="normal" title="Group Upload Scene 1"/>
+                                        <connections>
+                                            <action selector="buttonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Vtd-kA-bRd"/>
                                         </connections>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="feK-ko-amS">
-                                        <rect key="frame" x="0.0" y="123" width="200" height="33"/>
+                                        <rect key="frame" x="0.0" y="82" width="173" height="33"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <state key="normal" title="Multiple Tasks"/>
+                                        <state key="normal" title="Group Upload Scene 2"/>
                                         <connections>
-                                            <action selector="buttonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Btx-Ku-tv3"/>
-                                        </connections>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="d7X-JF-M5c">
-                                        <rect key="frame" x="0.0" y="164" width="200" height="33"/>
-                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <state key="normal" title="Group Tasks"/>
-                                        <connections>
-                                            <action selector="buttonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="rGb-6t-DzB"/>
+                                            <action selector="buttonTapped:" destination="BYZ-38-t0r" eventType="touchUpInside" id="OWo-TT-dYG"/>
                                         </connections>
                                     </button>
                                 </subviews>
@@ -81,16 +57,32 @@
                     </view>
                     <navigationItem key="navigationItem" id="Q3h-xF-PJ9"/>
                     <connections>
-                        <outlet property="label" destination="g3f-pg-Lhg" id="yvK-Bd-eYa"/>
-                        <outlet property="progressView" destination="lc2-NP-C13" id="tN4-K9-27C"/>
-                        <outletCollection property="tasksButton" destination="ZKw-0V-eJ1" collectionClass="NSMutableArray" id="7eQ-FN-qLv"/>
-                        <outletCollection property="tasksButton" destination="feK-ko-amS" collectionClass="NSMutableArray" id="wM5-mi-lO8"/>
-                        <outletCollection property="tasksButton" destination="d7X-JF-M5c" collectionClass="NSMutableArray" id="Nr2-6I-UKj"/>
+                        <outletCollection property="tasksButton" destination="RQn-xd-p17" collectionClass="NSMutableArray" id="i8R-qa-SQI"/>
+                        <outletCollection property="tasksButton" destination="ZKw-0V-eJ1" collectionClass="NSMutableArray" id="k1P-pa-3sP"/>
+                        <outletCollection property="tasksButton" destination="feK-ko-amS" collectionClass="NSMutableArray" id="bHQ-zd-0Th"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-198" y="-194"/>
+            <point key="canvasLocation" x="550" y="-195"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="IqL-ua-JWe">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="bKZ-wZ-Sfm" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="54b-T5-dqW">
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="NJQ-Yb-May"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="SRp-u7-c9K" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-199.19999999999999" y="-194.75262368815595"/>
         </scene>
     </scenes>
 </document>

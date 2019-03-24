@@ -1,56 +1,42 @@
 import UIKit
 
+enum Scene: String {
+    case normalUpload = "Normal Upload Scene"
+    case groupUpload1 = "Group Upload Scene 1"
+    case groupUpload2 = "Group Upload Scene 2"
+}
+
 class ViewController: UIViewController {
 
-    @IBOutlet weak var label: UILabel! {
-        didSet {
-            defaultLabelText = label.text ?? ""
-        }
-    }
     @IBOutlet var tasksButton: [UIButton]!
 
-    @IBOutlet weak var progressView: UIProgressView! {
-        didSet {
-            progressView.progress = 0
-        }
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(groupUploadDidFinish(_:)), name: UploadManager.GroupUploadingDidFinishNotification.Name, object: nil)
     }
-
-    private var defaultLabelText = ""
-
-    var currentTasks = [UploadTask]()
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        navigationController?.setNavigationBarHidden(true, animated: animated)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        navigationController?.setNavigationBarHidden(false, animated: animated)
+    }
 
     @IBAction func buttonTapped(_ sender: UIButton) {
 
-        guard let index = tasksButton.firstIndex(of: sender) else { return }
-        switch index {
-        case 0:
-            progressView.progress = 0
-            let task = UploadTask()
-            task.progressDelegate = self
-            currentTasks = [task]
-            UploadManager.shared.addTask(task)
-            label.text = "Running Single Task"
-        case 1:
-            let tasks = [UploadTask].init(repeating: UploadTask(), count: 3)
-            tasks.forEach { $0.progressDelegate = self }
-            currentTasks = tasks
-            UploadManager.shared.addTasks(tasks)
-            label.text = "Running Multiple Tasks"
-        case 2:
-            label.text = defaultLabelText
-        default:
-            label.text = defaultLabelText
-        }
+        guard let scene = Scene.init(rawValue: sender.currentTitle ?? "") else { fatalError() }
+        let vc = TaskTableViewController.init(scene: scene)
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @objc
+    private func groupUploadDidFinish(_ notification: Notification){
+        print(notification)
     }
 
-}
-
-extension ViewController: UploadTaskProgressDelegate {
-    func uploadTask(_ task: UploadTask, didUpdate progress: Progress) {
-        print("task: \(task), progress: \(progress)")
-        guard currentTasks.count == 1 else { return }
-        progressView.progress = Float(progress.completedUnitCount) / Float(progress.totalUnitCount)
-    }
 }
 
