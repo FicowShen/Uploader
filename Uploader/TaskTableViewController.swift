@@ -1,10 +1,20 @@
 import UIKit
 
+var normalTaskIDs = [String]()
+var groupTaskIDs1 = [String]()
+var groupTaskIDs2 = [String]()
+
 class TaskTableViewController: UITableViewController {
 
     private let scene: Scene
     
-    private var currentTasks = [UploadTask]()
+    private var currentTasks = [UploadTask]() {
+        didSet {
+            currentTasks.enumerated().forEach { taskRowIndice[$1] = $0 }
+        }
+    }
+
+    private var taskRowIndice = [UploadTask: Int]()
     
     init(scene: Scene) {
         self.scene = scene
@@ -25,37 +35,70 @@ class TaskTableViewController: UITableViewController {
     }
     
     func loadMockTasks() {
-        
+
+        if scene != .normalUpload {
+            NotificationCenter.default.addObserver(self, selector: #selector(groupUploadDidFinish(_:)), name: UploadManager.GroupUploadingDidFinishNotification.Name, object: nil)
+        }
+
         switch scene {
         case .normalUpload:
-            (0...10).forEach { (_) in
-                currentTasks.append(UploadTask())
+            if normalTaskIDs.isEmpty {
+                (0...3).forEach { (_) in
+                    let task = UploadTask()
+                    normalTaskIDs.append(task.id)
+                    currentTasks.append(task)
+                    UploadManager.shared.addTasks(currentTasks)
+                }
+            } else {
+                currentTasks = UploadManager.shared.tasks(withIdList: normalTaskIDs)
             }
         case .groupUpload1:
-            (0...6).forEach { (_) in
-                currentTasks.append(UploadTask(groupId: scene.rawValue))
+            if groupTaskIDs1.isEmpty {
+                (0...7).forEach { (_) in
+                    let task = UploadTask(groupId: scene.rawValue)
+                    groupTaskIDs1.append(task.id)
+                    currentTasks.append(task)
+                    UploadManager.shared.addTasks(currentTasks)
+                }
+            } else {
+                currentTasks = UploadManager.shared.tasks(withIdList: groupTaskIDs1)
             }
         case .groupUpload2:
-            (0...20).forEach { (_) in
-                currentTasks.append(UploadTask(groupId: scene.rawValue))
+            if groupTaskIDs2.isEmpty {
+                (0...10).forEach { (_) in
+                    let task = UploadTask(groupId: scene.rawValue)
+                    groupTaskIDs2.append(task.id)
+                    currentTasks.append(task)
+                    UploadManager.shared.addTasks(currentTasks)
+                }
+            } else {
+                currentTasks = UploadManager.shared.tasks(withIdList: groupTaskIDs2)
             }
         }
-        
-        UploadManager.shared.addTasks(currentTasks)
+    }
+
+    @objc
+    private func groupUploadDidFinish(_ notification: Notification){
+
+        self.showGroupTaskNotification(notification)
     }
 
     // MARK: - Table view data source
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
         return currentTasks.count
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: TaskTableViewCell.ID, for: indexPath) as? TaskTableViewCell else { fatalError() }
+        return cell
+    }
+
+    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+
+        guard let cell = cell as? TaskTableViewCell else { fatalError() }
         cell.order = indexPath.row + 1
         cell.task = currentTasks[indexPath.row]
-        return cell
     }
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

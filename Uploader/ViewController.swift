@@ -35,8 +35,31 @@ class ViewController: UIViewController {
     
     @objc
     private func groupUploadDidFinish(_ notification: Notification){
-        print(notification)
+
+        self.showGroupTaskNotification(notification)
     }
 
+}
+
+
+extension UIViewController {
+
+    func showGroupTaskNotification(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+            let info = userInfo[UploadManager.GroupUploadingDidFinishNotification.UserInfoKey] as? [String: Any],
+            let groupID = info[UploadManager.GroupUploadingDidFinishNotification.GroupIDKey] as? String,
+            let succeededCount = info[UploadManager.GroupUploadingDidFinishNotification.SucceededCountKey] as? Int,
+            let failedCount = info[UploadManager.GroupUploadingDidFinishNotification.FailedCountKey] as? Int else { return }
+
+        guard let _ = self.view.window else { return }
+        self.showAlert(msg: "\(groupID) 已完成！\n成功：\(succeededCount) 个任务，失败：\(failedCount) 个任务。")
+    }
+
+    func showAlert(msg: String) {
+        let alert = UIAlertController(title: "提示", message: msg, preferredStyle: .alert)
+        let okAction = UIAlertAction.init(title: "OK", style: .destructive)
+        alert.addAction(okAction)
+        self.present(alert, animated: true, completion: nil)
+    }
 }
 

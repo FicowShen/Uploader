@@ -11,7 +11,7 @@ import UIKit
 class TaskTableViewCell: UITableViewCell {
 
     static let ID = "TaskTableViewCell"
-    static let Height: CGFloat = 72
+    static let Height: CGFloat = 86
     
     @IBOutlet weak var orderLabel: UILabel!
     @IBOutlet weak var progressView: UIProgressView!
@@ -27,26 +27,21 @@ class TaskTableViewCell: UITableViewCell {
         didSet {
             guard let task = task else { return }
             task.progressDelegate = self
-            state = task.state.description
+            progressView.progress = Float(task.progress.completedUnitCount) / Float(task.progress.totalUnitCount)
+            stateLabel.text = task.state.description
             updateColorForTask(task)
         }
     }
     
-    private var state: String = "" {
-        didSet {
-            stateLabel.text = "状态：\(state)"
-        }
-    }
-    
     private func updateColorForTask(_ task: UploadTask) {
-        
+
         switch task.state {
         case .ready:
             progressView.isHidden = true
             stateLabel.textColor = .lightGray
         case .uploading:
             progressView.isHidden = false
-            stateLabel.textColor = .darkGray
+            stateLabel.textColor = .brown
         case .succeeded:
             progressView.isHidden = true
             stateLabel.textColor = .green
@@ -55,19 +50,25 @@ class TaskTableViewCell: UITableViewCell {
             stateLabel.textColor = .red
         }
     }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+
+        self.task?.progressDelegate = nil
+        self.task = nil
+    }
     
 }
 
 extension TaskTableViewCell: UploadTaskProgressDelegate {
     func uploadTaskDidUpdateState(_ task: UploadTask) {
-        
-        state = task.state.description
+        guard task == self.task else { return }
+        stateLabel.text = task.state.description
         updateColorForTask(task)
     }
     
     func uploadTaskDidUpdateProgress(_ task: UploadTask) {
-//        print("task: \(task)")
-        
+        guard task == self.task else { return }
         progressView.progress = Float(task.progress.completedUnitCount) / Float(task.progress.totalUnitCount)
         
     }
