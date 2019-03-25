@@ -5,15 +5,15 @@ protocol UploadTaskProgressDelegate {
     func uploadTaskDidUpdateProgress(_ task: UploadTask)
 }
 
-protocol UploadTaskProtocol {
-    var id: String { get }
-    var groupId: String? { get }
-    var timeStamp: TimeInterval { get }
+//protocol UploadTaskProtocol {
+//    var id: String { get }
+//    var groupId: String? { get }
+//    var timeStamp: TimeInterval { get }
+//
+//    var progressDelegate: UploadTaskProgressDelegate? { get set }
+//}
 
-    var progressDelegate: UploadTaskProgressDelegate? { get set }
-}
-
-class UploadTask: Hashable, UploadTaskProtocol {
+class UploadTask: Hashable {
 
     enum State {
         case ready

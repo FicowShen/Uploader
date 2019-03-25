@@ -43,12 +43,12 @@ class TaskTableViewController: UITableViewController {
         switch scene {
         case .normalUpload:
             if normalTaskIDs.isEmpty {
-                (0...3).forEach { (_) in
+                (0...5).forEach { (_) in
                     let task = UploadTask()
                     normalTaskIDs.append(task.id)
                     currentTasks.append(task)
-                    UploadManager.shared.addTasks(currentTasks)
                 }
+                UploadManager.shared.addTasks(currentTasks)
             } else {
                 currentTasks = UploadManager.shared.tasks(withIdList: normalTaskIDs)
             }
@@ -58,19 +58,19 @@ class TaskTableViewController: UITableViewController {
                     let task = UploadTask(groupId: scene.rawValue)
                     groupTaskIDs1.append(task.id)
                     currentTasks.append(task)
-                    UploadManager.shared.addTasks(currentTasks)
                 }
+                UploadManager.shared.addTasks(currentTasks)
             } else {
                 currentTasks = UploadManager.shared.tasks(withIdList: groupTaskIDs1)
             }
         case .groupUpload2:
             if groupTaskIDs2.isEmpty {
-                (0...10).forEach { (_) in
+                (0...11).forEach { (_) in
                     let task = UploadTask(groupId: scene.rawValue)
                     groupTaskIDs2.append(task.id)
                     currentTasks.append(task)
-                    UploadManager.shared.addTasks(currentTasks)
                 }
+                UploadManager.shared.addTasks(currentTasks)
             } else {
                 currentTasks = UploadManager.shared.tasks(withIdList: groupTaskIDs2)
             }

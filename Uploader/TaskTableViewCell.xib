@@ -13,14 +13,14 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="0.0" reuseIdentifier="TaskTableViewCell" rowHeight="69" id="KGk-i7-Jjw" customClass="TaskTableViewCell" customModule="Uploader" customModuleProvider="target">
-            <rect key="frame" x="0.0" y="0.0" width="375" height="72"/>
+            <rect key="frame" x="0.0" y="0.0" width="375" height="86"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
-                <rect key="frame" x="0.0" y="0.0" width="375" height="71.5"/>
+                <rect key="frame" x="0.0" y="0.0" width="375" height="85.5"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="top" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="FYO-Go-48F">
-                        <rect key="frame" x="8" y="0.0" width="359" height="71.5"/>
+                        <rect key="frame" x="8" y="0.0" width="359" height="85.5"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="mve-yP-eeW">
                                 <rect key="frame" x="0.0" y="0.0" width="359" height="8"/>
@@ -29,29 +29,49 @@
                                     <constraint firstAttribute="height" constant="8" id="7BU-pt-utf"/>
                                 </constraints>
                             </view>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" text="1" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IQ3-uY-Nvr">
-                                <rect key="frame" x="0.0" y="16" width="359" height="3.5"/>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                            <stackView opaque="NO" contentMode="scaleToFill" alignment="top" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="UBW-r4-l9M">
+                                <rect key="frame" x="0.0" y="16" width="359" height="24"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="252" horizontalCompressionResistancePriority="751" text="1" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IQ3-uY-Nvr">
+                                        <rect key="frame" x="0.0" y="0.0" width="10" height="24"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="24" id="b5C-eZ-e6V"/>
+                                        </constraints>
+                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="123456" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="502-Wi-uIz">
+                                        <rect key="frame" x="18" y="0.0" width="341" height="24"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                        <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="trailing" secondItem="502-Wi-uIz" secondAttribute="trailing" id="GRU-WU-eVf"/>
+                                    <constraint firstItem="502-Wi-uIz" firstAttribute="centerY" secondItem="IQ3-uY-Nvr" secondAttribute="centerY" id="ICP-xb-Ze9"/>
+                                    <constraint firstItem="502-Wi-uIz" firstAttribute="leading" secondItem="IQ3-uY-Nvr" secondAttribute="trailing" constant="8" id="mkv-Tx-dx1"/>
+                                    <constraint firstItem="IQ3-uY-Nvr" firstAttribute="leading" secondItem="UBW-r4-l9M" secondAttribute="leading" id="n9u-8u-5co"/>
+                                </constraints>
+                            </stackView>
                             <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="Ak2-ze-RLi">
-                                <rect key="frame" x="0.0" y="27.5" width="359" height="4"/>
+                                <rect key="frame" x="0.0" y="48" width="359" height="4"/>
                                 <color key="tintColor" red="1" green="0.57637232540000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="4" id="gvK-7R-E2D"/>
                                 </constraints>
                             </progressView>
                             <stackView opaque="NO" contentMode="scaleToFill" alignment="top" translatesAutoresizingMaskIntoConstraints="NO" id="K3W-Xp-7PT">
-                                <rect key="frame" x="0.0" y="39.5" width="349" height="16"/>
+                                <rect key="frame" x="0.0" y="60" width="349" height="9.5"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="状态：" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="f76-NX-BBN">
-                                        <rect key="frame" x="0.0" y="0.0" width="40" height="16"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="40" height="9.5"/>
                                         <fontDescription key="fontDescription" type="system" weight="medium" pointSize="13"/>
                                         <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <nil key="highlightedColor"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xua-7x-d87">
-                                        <rect key="frame" x="40" y="0.0" width="309" height="16"/>
+                                        <rect key="frame" x="40" y="0.0" width="309" height="9.5"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                         <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <nil key="highlightedColor"/>
@@ -59,7 +79,7 @@
                                 </subviews>
                             </stackView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vDX-xc-hbI">
-                                <rect key="frame" x="0.0" y="63.5" width="359" height="8"/>
+                                <rect key="frame" x="0.0" y="77.5" width="359" height="8"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="8" id="G1g-LS-qiu"/>
@@ -70,10 +90,10 @@
                             <constraint firstAttribute="trailing" secondItem="mve-yP-eeW" secondAttribute="trailing" id="2iL-JO-tPy"/>
                             <constraint firstItem="vDX-xc-hbI" firstAttribute="leading" secondItem="FYO-Go-48F" secondAttribute="leading" id="5vq-sH-GtG"/>
                             <constraint firstItem="Ak2-ze-RLi" firstAttribute="leading" secondItem="FYO-Go-48F" secondAttribute="leading" id="QFA-RX-aaI"/>
-                            <constraint firstItem="IQ3-uY-Nvr" firstAttribute="leading" secondItem="FYO-Go-48F" secondAttribute="leading" id="aEL-nC-i7B"/>
+                            <constraint firstAttribute="trailing" secondItem="UBW-r4-l9M" secondAttribute="trailing" id="Rtc-Oe-ht1"/>
+                            <constraint firstItem="UBW-r4-l9M" firstAttribute="leading" secondItem="FYO-Go-48F" secondAttribute="leading" id="blr-YV-NSY"/>
                             <constraint firstAttribute="trailing" secondItem="Ak2-ze-RLi" secondAttribute="trailing" id="guj-aR-BeY"/>
                             <constraint firstItem="mve-yP-eeW" firstAttribute="leading" secondItem="FYO-Go-48F" secondAttribute="leading" id="jfD-Gq-xwb"/>
-                            <constraint firstAttribute="trailing" secondItem="IQ3-uY-Nvr" secondAttribute="trailing" id="v5n-Yl-YW7"/>
                             <constraint firstAttribute="trailing" secondItem="vDX-xc-hbI" secondAttribute="trailing" id="vyQ-dC-TiW"/>
                         </constraints>
                     </stackView>
@@ -88,6 +108,7 @@
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
             <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
             <connections>
+                <outlet property="idLabel" destination="502-Wi-uIz" id="Phl-F4-hc0"/>
                 <outlet property="orderLabel" destination="IQ3-uY-Nvr" id="HYM-gv-aex"/>
                 <outlet property="progressView" destination="Ak2-ze-RLi" id="DkA-n4-cIf"/>
                 <outlet property="stateLabel" destination="xua-7x-d87" id="Wpl-JR-GDK"/>

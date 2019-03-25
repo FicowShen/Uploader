@@ -14,6 +14,7 @@ class TaskTableViewCell: UITableViewCell {
     static let Height: CGFloat = 86
     
     @IBOutlet weak var orderLabel: UILabel!
+    @IBOutlet weak var idLabel: UILabel!
     @IBOutlet weak var progressView: UIProgressView!
     @IBOutlet weak var stateLabel: UILabel!
     
@@ -26,8 +27,9 @@ class TaskTableViewCell: UITableViewCell {
     var task: UploadTask? {
         didSet {
             guard let task = task else { return }
+            idLabel.text = task.id
             task.progressDelegate = self
-            progressView.progress = Float(task.progress.completedUnitCount) / Float(task.progress.totalUnitCount)
+            progressView.progress = Float(task.progress.fractionCompleted)
             stateLabel.text = task.state.description
             updateColorForTask(task)
         }
@@ -63,13 +65,14 @@ class TaskTableViewCell: UITableViewCell {
 extension TaskTableViewCell: UploadTaskProgressDelegate {
     func uploadTaskDidUpdateState(_ task: UploadTask) {
         guard task == self.task else { return }
+        idLabel.text = task.id
         stateLabel.text = task.state.description
         updateColorForTask(task)
     }
     
     func uploadTaskDidUpdateProgress(_ task: UploadTask) {
         guard task == self.task else { return }
-        progressView.progress = Float(task.progress.completedUnitCount) / Float(task.progress.totalUnitCount)
-        
+        idLabel.text = task.id
+        progressView.progress = Float(task.progress.fractionCompleted)
     }
 }
