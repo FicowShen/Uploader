@@ -19,12 +19,16 @@ class TaskTableViewCell: UITableViewCell {
     var task: UploadTask? {
         didSet {
             guard let task = task else { return }
-            idLabel.text = task.id
-            task.progressDelegate = self
-            progressView.progress = Float(task.progress.fractionCompleted)
-            stateLabel.text = task.state.description
-            updateColorForTask(task)
+            updateViews(forTask: task)
         }
+    }
+
+    private func updateViews(forTask task: UploadTask) {
+        idLabel.text = task.id
+        task.progressDelegate = self
+        progressView.progress = Float(task.progress.fractionCompleted)
+        stateLabel.text = task.state.description
+        updateColorForTask(task)
     }
     
     private func updateColorForTask(_ task: UploadTask) {
@@ -48,22 +52,24 @@ class TaskTableViewCell: UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
 
-        self.task?.progressDelegate = nil
-        self.task = nil
+        clearTaskDelegate()
+    }
+
+    private func clearTaskDelegate() {
+        task?.progressDelegate = nil
+        task = nil
     }
     
 }
 
 extension TaskTableViewCell: UploadTaskProgressDelegate {
     func uploadTaskDidUpdateState(_ task: UploadTask) {
-        
         idLabel.text = task.id
         stateLabel.text = task.state.description
         updateColorForTask(task)
     }
     
     func uploadTaskDidUpdateProgress(_ task: UploadTask) {
-        
         idLabel.text = task.id
         progressView.progress = Float(task.progress.fractionCompleted)
     }

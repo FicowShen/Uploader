@@ -1,6 +1,6 @@
 import Foundation
 
-protocol UploadTaskProgressDelegate {
+protocol UploadTaskProgressDelegate: class {
     func uploadTaskDidUpdateState(_ task: UploadTask)
     func uploadTaskDidUpdateProgress(_ task: UploadTask)
 }
@@ -48,7 +48,7 @@ class UploadTask: Hashable {
     var state: State = .ready
     let progress = Progress()
 
-    var progressDelegate: UploadTaskProgressDelegate?
+    weak var progressDelegate: UploadTaskProgressDelegate?
 
     init(id: String = UUID().uuidString, groupId: String? = nil, timeStamp: TimeInterval = Date().timeIntervalSince1970) {
         self.id = id

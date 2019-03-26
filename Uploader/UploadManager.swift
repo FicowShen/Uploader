@@ -1,71 +1,29 @@
 import Foundation
 
-func myDebugPrint(_ items: Any...) {
-//    print(items)
-}
-
 class UploadManager: NSObject {
 
     static let shared = UploadManager()
     
     struct GroupUploadingDidFinishNotification {
-        static let Name = Notification.Name.init("UploadGroupTaskFinished")
-        static let UserInfoKey = "GroupUploadingDidFinishNotificationUserInfoKey"
-        static let GroupIDKey = "GroupIDKey"
-        static let SucceededCountKey = "SucceededCountKey"
-        static let FailedCountKey = "FailedCountKey"
+        static let Name = Notification.Name.init("GroupUploadingDidFinishNotification")
+        static let UserInfoKey = "GroupUploadingDidFinishNotification-UserInfoKey"
+        static let GroupIDKey = "GroupUploadingDidFinishNotification-GroupIDKey"
+        static let SucceededCountKey = "GroupUploadingDidFinishNotification-SucceededCountKey"
+        static let FailedCountKey = "GroupUploadingDidFinishNotification-FailedCountKey"
     }
 
     var maxConcurrentTaskCount = 3
 
-    private let readyDispatchQueue = DispatchQueue(label: "readyDispatchQueue")
-    private let uploadingDispatchQueue = DispatchQueue(label: "uploadingDispatchQueue")
-    private let finishedDispatchQueue = DispatchQueue(label: "finishedDispatchQueue")
-    private let groupCountDispatchQueue = DispatchQueue(label: "groupCountDispatchQueue")
-    
-    private var _readyQueue = [UploadTask]()
-    private var _uploadingQueue = [String: UploadTask]()
-    private var _finishedQueue = [UploadTask: (success: Bool, error: Error?)]()
-    private var _groupMemberCount = [String: Int]()
-    
-    private var readyQueue: [UploadTask] {
-        get {
-            return readyDispatchQueue.sync { self._readyQueue }
-        }
-        set {
-            readyDispatchQueue.sync { self._readyQueue = newValue }
-        }
-    }
-    private var uploadingQueue: [String: UploadTask]  {
-        get {
-            return uploadingDispatchQueue.sync { self._uploadingQueue }
-        }
-        set {
-            uploadingDispatchQueue.sync {self._uploadingQueue = newValue}
-        }
-    }
-    private var finishedQueue: [UploadTask: (success: Bool, error: Error?)] {
-        get {
-            return finishedDispatchQueue.sync { self._finishedQueue }
-        }
-        set {
-            finishedDispatchQueue.sync { self._finishedQueue = newValue }
-        }
-    }
-    private var groupMemberCount: [String: Int] {
-        get {
-            return groupCountDispatchQueue.sync { self._groupMemberCount }
-        }
-        set {
-            groupCountDispatchQueue.sync { self._groupMemberCount = newValue }
-        }
-    }
+    private var readyQueue = [UploadTask]()
+    private var uploadingQueue = [String: UploadTask]()
+    private var finishedQueue = [UploadTask: (success: Bool, error: Error?)]()
+    private var groupMemberCount = [String: Int]()
 
     private var taskCount = 0
 
     private override init() { super.init() }
 
-    func tasks(withIdList IdList: [String]) -> [UploadTask] {
+    func tasks(forIdList IdList: [String]) -> [UploadTask] {
         var tasks = [String: UploadTask]()
         readyQueue.forEach { tasks[$0.id] = $0 }
         uploadingQueue.map { $1 }.forEach { tasks[$0.id] = $0 }
@@ -73,41 +31,29 @@ class UploadManager: NSObject {
         return IdList.compactMap { tasks[$0] }
     }
 
-//    func addTask(_ task: UploadTask) {
-//        guard tasks(withIdList: [task.id]).isEmpty else {
-//            assertionFailure()
-//            return
-//        }
-//        if let groupId = task.groupId {
-//            if let count = self.groupMemberCount[groupId] {
-//                self.groupMemberCount[groupId] = count + 1
-//            } else {
-//                self.groupMemberCount[groupId] = 1
-//            }
-//        }
-//        task.progressDelegate?.uploadTaskDidUpdateState(task)
-//        self.readyQueue.append(task)
-//        self.uploadIfPossible()
-//    }
+    func addTask(_ task: UploadTask) {
+        guard tasks(forIdList: [task.id]).isEmpty else {
+            assertionFailure()
+            return
+        }
+        increaseGroupCount(forTask: task)
+        task.progressDelegate?.uploadTaskDidUpdateState(task)
+        readyQueue.append(task)
+        uploadIfPossible()
+    }
 
     func addTasks(_ tasks: [UploadTask]) {
         let idList = tasks.map { $0.id }
-        guard self.tasks(withIdList: idList).isEmpty else {
+        guard self.tasks(forIdList: idList).isEmpty else {
             assertionFailure()
             return
         }
         tasks.forEach {
+            increaseGroupCount(forTask: $0)
             $0.progressDelegate?.uploadTaskDidUpdateState($0)
-            if let groupId = $0.groupId {
-                if let count = self.groupMemberCount[groupId] {
-                    self.groupMemberCount[groupId] = count + 1
-                } else {
-                    self.groupMemberCount[groupId] = 1
-                }
-            }
-            self.readyQueue.append($0)
+            readyQueue.append($0)
         }
-        self.uploadIfPossible()
+        uploadIfPossible()
     }
 
     private func uploadIfPossible() {
@@ -126,7 +72,7 @@ class UploadManager: NSObject {
         taskCount += toUploadTasks.count
 
         if taskCount < maxConcurrentTaskCount {
-            self.uploadIfPossible()
+            uploadIfPossible()
         }
     }
 
@@ -134,51 +80,58 @@ class UploadManager: NSObject {
 
         task.state = .uploading
         task.progressDelegate?.uploadTaskDidUpdateState(task)
-        
         uploadingQueue[task.id] = task
-        self.mockUploadTask(task) { [unowned self] (task, data, response, error) in
-            
-//            myDebugPrint(data, response, error)
-            dispatchPrecondition(condition: .onQueue(.main))
-            self.finishedQueue[task] = (success: error == nil, error: error)
-            self.uploadingQueue[task.id] = nil
-            self.taskCount -= 1
-            defer { self.uploadIfPossible() }
 
-            if let error = error {
-                task.state = .failed(error)
-            } else {
-                task.state = .succeeded
-            }
-            task.progressDelegate?.uploadTaskDidUpdateState(task)
-            
-            self.decreaseGroupCount(forTask: task)
+        mockUploadTask(task) { [unowned self] (task, error) in
+            self.processFinishedTask(task, error: error)
         }
-        
+    }
+
+    private func processFinishedTask(_ task: UploadTask, error: Error?) {
+
+        assert(Thread.current.isMainThread)
+        defer { self.uploadIfPossible() }
+
+        finishedQueue[task] = (success: error == nil, error: error)
+        uploadingQueue[task.id] = nil
+        taskCount -= 1
+
+        if let error = error {
+            task.state = .failed(error)
+        } else {
+            task.state = .succeeded
+        }
+        task.progressDelegate?.uploadTaskDidUpdateState(task)
+        decreaseGroupCount(forTask: task)
+    }
+
+    private func increaseGroupCount(forTask task: UploadTask) {
+        guard let groupId = task.groupId else { return }
+        guard let count = groupMemberCount[groupId] else {
+            groupMemberCount[groupId] = 1
+            return
+        }
+        groupMemberCount[groupId] = count + 1
     }
     
     private func decreaseGroupCount(forTask task: UploadTask) {
         guard let groupId = task.groupId,
-            let count = self.groupMemberCount[groupId]
+            let count = groupMemberCount[groupId]
             else { return }
-        
         guard count == 1 else {
-            self.groupMemberCount[groupId] = count - 1
+            groupMemberCount[groupId] = count - 1
             return
         }
-        
-        self.groupMemberCount[groupId] = nil
-        self.sendGroupTaskCompletionNotification(forGroup: groupId)
+        groupMemberCount[groupId] = nil
+        sendGroupTaskCompletionNotification(forGroup: groupId)
     }
-    
+
     private func sendGroupTaskCompletionNotification(forGroup id: String) {
-        let finishedTasks = self.finishedQueue.keys.filter({ $0.groupId == id })
+        let finishedTasks = finishedQueue.keys.filter({ $0.groupId == id })
         let succeededCount = finishedTasks.reduce(0, { (result: Int, task: UploadTask) -> Int in
             switch task.state {
-            case .succeeded:
-                return result + 1
-            default:
-                return result
+            case .succeeded: return result + 1
+            default: return result
             }
         })
         let failedCount = finishedTasks.count - succeededCount
@@ -193,37 +146,30 @@ class UploadManager: NSObject {
 
 extension UploadManager {
 
-    func mockUploadTask(_ task: UploadTask, completionHandler: @escaping (UploadTask, Data?, URLResponse?, Error?) -> Void) {
+    func mockUploadTask(_ task: UploadTask, completionHandler: @escaping (UploadTask, Error?) -> Void) {
         
         let delay = Int.random(in: 0...5)
         DispatchQueue.global().asyncAfter(deadline: .now() + .seconds(delay)) {
-            
-            var data: Data?
-            var response: URLResponse?
             var error: Error?
-            
             defer {
                 DispatchQueue.main.async {
-                    completionHandler(task, data, response, error)
+                    completionHandler(task, error)
                 }
             }
-            guard Int.random(in: 0...1) > 0 else {
+            guard Int.random(in: 0...2) > 0 else {
                 error = NSError(domain: "Mock Request Failed", code: -1, userInfo: nil)
                 return
             }
-            
-            (1...100).forEach { (value) in
-                Thread.sleep(forTimeInterval: 0.1)
-                let currentValue = Int64(value)
+            (1...50).forEach { (value) in
+                let interval = TimeInterval(Int.random(in: 0...8)) * 0.01
+                Thread.sleep(forTimeInterval: interval)
+                let currentValue = Int64(value * 2)
                 DispatchQueue.main.async {
                     task.progress.totalUnitCount = 100
                     task.progress.completedUnitCount = currentValue
                     task.progressDelegate?.uploadTaskDidUpdateProgress(task)
                 }
             }
-            
-            data = "Mock Request Succeeded".data(using: .utf8)
-            response = URLResponse()
         }
     }
 }

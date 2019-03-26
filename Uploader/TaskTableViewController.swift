@@ -7,15 +7,8 @@ var group2TaskIDs = [String]()
 class TaskTableViewController: UITableViewController {
 
     private let scene: Scene
-    
-    private var currentTasks = [UploadTask]() {
-        didSet {
-            currentTasks.enumerated().forEach { taskRowIndice[$1] = $0 }
-        }
-    }
+    private var currentTasks = [UploadTask]()
 
-    private var taskRowIndice = [UploadTask: Int]()
-    
     init(scene: Scene) {
         self.scene = scene
         super.init(style: .plain)
@@ -29,39 +22,37 @@ class TaskTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        NotificationCenter.default.addObserver(self, selector: #selector(groupUploadDidFinish(_:)), name: UploadManager.GroupUploadingDidFinishNotification.Name, object: nil)
+
         tableView.allowsSelection = false
         tableView.register(UINib.init(nibName: TaskTableViewCell.ID, bundle: nil), forCellReuseIdentifier: TaskTableViewCell.ID)
+
         loadMockTasks()
     }
     
-    func loadMockTasks() {
-
-        if scene != .normalUpload {
-            NotificationCenter.default.addObserver(self, selector: #selector(groupUploadDidFinish(_:)), name: UploadManager.GroupUploadingDidFinishNotification.Name, object: nil)
-        }
-
+    private func loadMockTasks() {
         switch scene {
         case .normalUpload:
             if normalTaskIDs.isEmpty {
-                (0...5).forEach { (_) in
+                (0...4).forEach { (_) in
                     let task = UploadTask()
                     normalTaskIDs.append(task.id)
                     currentTasks.append(task)
                 }
                 UploadManager.shared.addTasks(currentTasks)
             } else {
-                currentTasks = UploadManager.shared.tasks(withIdList: normalTaskIDs)
+                currentTasks = UploadManager.shared.tasks(forIdList: normalTaskIDs)
             }
         case .groupUpload1:
             if group1TaskIDs.isEmpty {
-                (0...7).forEach { (_) in
+                (0...6).forEach { (_) in
                     let task = UploadTask(groupId: scene.rawValue)
                     group1TaskIDs.append(task.id)
                     currentTasks.append(task)
                 }
                 UploadManager.shared.addTasks(currentTasks)
             } else {
-                currentTasks = UploadManager.shared.tasks(withIdList: group1TaskIDs)
+                currentTasks = UploadManager.shared.tasks(forIdList: group1TaskIDs)
             }
         case .groupUpload2:
             if group2TaskIDs.isEmpty {
@@ -72,15 +63,14 @@ class TaskTableViewController: UITableViewController {
                 }
                 UploadManager.shared.addTasks(currentTasks)
             } else {
-                currentTasks = UploadManager.shared.tasks(withIdList: group2TaskIDs)
+                currentTasks = UploadManager.shared.tasks(forIdList: group2TaskIDs)
             }
         }
     }
 
     @objc
-    private func groupUploadDidFinish(_ notification: Notification){
-
-        self.showGroupTaskNotification(notification)
+    private func groupUploadDidFinish(_ notification: Notification) {
+        showGroupTaskNotification(notification)
     }
 
     // MARK: - Table view data source
@@ -90,13 +80,15 @@ class TaskTableViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: TaskTableViewCell.ID, for: indexPath) as? TaskTableViewCell else { fatalError() }
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: TaskTableViewCell.ID, for: indexPath) as? TaskTableViewCell
+            else { fatalError() }
         return cell
     }
 
     override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
 
-        guard let cell = cell as? TaskTableViewCell else { fatalError() }
+        guard let cell = cell as? TaskTableViewCell
+            else { fatalError() }
         cell.order = indexPath.row + 1
         cell.task = currentTasks[indexPath.row]
     }
