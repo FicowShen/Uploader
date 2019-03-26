@@ -1,8 +1,8 @@
 import UIKit
 
 var normalTaskIDs = [String]()
-var groupTaskIDs1 = [String]()
-var groupTaskIDs2 = [String]()
+var group1TaskIDs = [String]()
+var group2TaskIDs = [String]()
 
 class TaskTableViewController: UITableViewController {
 
@@ -53,26 +53,26 @@ class TaskTableViewController: UITableViewController {
                 currentTasks = UploadManager.shared.tasks(withIdList: normalTaskIDs)
             }
         case .groupUpload1:
-            if groupTaskIDs1.isEmpty {
+            if group1TaskIDs.isEmpty {
                 (0...7).forEach { (_) in
                     let task = UploadTask(groupId: scene.rawValue)
-                    groupTaskIDs1.append(task.id)
+                    group1TaskIDs.append(task.id)
                     currentTasks.append(task)
                 }
                 UploadManager.shared.addTasks(currentTasks)
             } else {
-                currentTasks = UploadManager.shared.tasks(withIdList: groupTaskIDs1)
+                currentTasks = UploadManager.shared.tasks(withIdList: group1TaskIDs)
             }
         case .groupUpload2:
-            if groupTaskIDs2.isEmpty {
+            if group2TaskIDs.isEmpty {
                 (0...11).forEach { (_) in
                     let task = UploadTask(groupId: scene.rawValue)
-                    groupTaskIDs2.append(task.id)
+                    group2TaskIDs.append(task.id)
                     currentTasks.append(task)
                 }
                 UploadManager.shared.addTasks(currentTasks)
             } else {
-                currentTasks = UploadManager.shared.tasks(withIdList: groupTaskIDs2)
+                currentTasks = UploadManager.shared.tasks(withIdList: group2TaskIDs)
             }
         }
     }

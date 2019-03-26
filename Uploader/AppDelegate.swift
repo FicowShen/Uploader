@@ -1,11 +1,3 @@
-//
-//  AppDelegate.swift
-//  Uploader
-//
-//  Created by fshen on 2019/3/22.
-//  Copyright © 2019 fshen. All rights reserved.
-//
-
 import UIKit
 
 @UIApplicationMain

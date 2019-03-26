@@ -1,16 +1,8 @@
-//
-//  TaskTableViewCell.swift
-//  Uploader
-//
-//  Created by Ficow on 2019/3/24.
-//  Copyright © 2019 fshen. All rights reserved.
-//
-
 import UIKit
 
 class TaskTableViewCell: UITableViewCell {
 
-    static let ID = "TaskTableViewCell"
+    static let ID = String(describing: TaskTableViewCell.self)
     static let Height: CGFloat = 86
     
     @IBOutlet weak var orderLabel: UILabel!
@@ -64,14 +56,14 @@ class TaskTableViewCell: UITableViewCell {
 
 extension TaskTableViewCell: UploadTaskProgressDelegate {
     func uploadTaskDidUpdateState(_ task: UploadTask) {
-        guard task == self.task else { return }
+        
         idLabel.text = task.id
         stateLabel.text = task.state.description
         updateColorForTask(task)
     }
     
     func uploadTaskDidUpdateProgress(_ task: UploadTask) {
-        guard task == self.task else { return }
+        
         idLabel.text = task.id
         progressView.progress = Float(task.progress.fractionCompleted)
     }
