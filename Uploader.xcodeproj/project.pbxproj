@@ -12,7 +12,9 @@
 		6AA9E341224793720064D799 /* TaskTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6AA9E33F224793720064D799 /* TaskTableViewCell.xib */; };
 		6B63954DB043850AF2146611 /* Pods_UploaderTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3FB5C142838D3AD99F677111 /* Pods_UploaderTests.framework */; };
 		89102DEF2248DC5900348785 /* UploadTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89102DEE2248DC5900348785 /* UploadTask.swift */; };
+		8927F6412254A7E7009B23BB /* TaskManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8927F6402254A7E7009B23BB /* TaskManager.swift */; };
 		8954EEEE2249C65100976628 /* Tools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8954EEED2249C65100976628 /* Tools.swift */; };
+		89D3FDFA22560ACE002C9C6F /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89D3FDF922560ACE002C9C6F /* Extensions.swift */; };
 		89F215982244B8B8006675F7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89F215972244B8B8006675F7 /* AppDelegate.swift */; };
 		89F2159A2244B8B8006675F7 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89F215992244B8B8006675F7 /* MainViewController.swift */; };
 		89F2159D2244B8B8006675F7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 89F2159B2244B8B8006675F7 /* Main.storyboard */; };
@@ -54,7 +56,9 @@
 		6AA9E33F224793720064D799 /* TaskTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TaskTableViewCell.xib; sourceTree = "<group>"; };
 		6C95FC1DBCD09BA82EC72783 /* Pods-UploaderTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UploaderTests.debug.xcconfig"; path = "Target Support Files/Pods-UploaderTests/Pods-UploaderTests.debug.xcconfig"; sourceTree = "<group>"; };
 		89102DEE2248DC5900348785 /* UploadTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadTask.swift; sourceTree = "<group>"; };
+		8927F6402254A7E7009B23BB /* TaskManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskManager.swift; sourceTree = "<group>"; };
 		8954EEED2249C65100976628 /* Tools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tools.swift; sourceTree = "<group>"; };
+		89D3FDF922560ACE002C9C6F /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		89F215942244B8B8006675F7 /* Uploader.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Uploader.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		89F215972244B8B8006675F7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		89F215992244B8B8006675F7 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
@@ -111,7 +115,6 @@
 				B1B5DECFC4FF636AE1901254 /* Pods-UploaderUITests.debug.xcconfig */,
 				28F49CE1067664CCAAE61C39 /* Pods-UploaderUITests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -132,6 +135,15 @@
 				89F215A02244B8B9006675F7 /* LaunchScreen.storyboard */,
 			);
 			path = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		8927F63F2254A785009B23BB /* Legacy */ = {
+			isa = PBXGroup;
+			children = (
+				89F215C52244B8D5006675F7 /* UploadManager.swift */,
+				89102DEE2248DC5900348785 /* UploadTask.swift */,
+			);
+			path = Legacy;
 			sourceTree = "<group>";
 		};
 		89F2158B2244B8B8006675F7 = {
@@ -159,17 +171,18 @@
 		89F215962244B8B8006675F7 /* Uploader */ = {
 			isa = PBXGroup;
 			children = (
-				89F215A32244B8B9006675F7 /* Info.plist */,
 				6AA9E342224793AF0064D799 /* Supporting Files */,
+				8927F63F2254A785009B23BB /* Legacy */,
+				89F215A32244B8B9006675F7 /* Info.plist */,
 				89F215972244B8B8006675F7 /* AppDelegate.swift */,
 				89F215992244B8B8006675F7 /* MainViewController.swift */,
 				6AA9E33C22478CE30064D799 /* TaskTableViewController.swift */,
 				6AA9E33E224793720064D799 /* TaskTableViewCell.swift */,
 				6AA9E33F224793720064D799 /* TaskTableViewCell.xib */,
 				89F2159B2244B8B8006675F7 /* Main.storyboard */,
-				89F215C52244B8D5006675F7 /* UploadManager.swift */,
-				89102DEE2248DC5900348785 /* UploadTask.swift */,
 				8954EEED2249C65100976628 /* Tools.swift */,
+				8927F6402254A7E7009B23BB /* TaskManager.swift */,
+				89D3FDF922560ACE002C9C6F /* Extensions.swift */,
 			);
 			path = Uploader;
 			sourceTree = "<group>";
@@ -424,7 +437,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				89F2159A2244B8B8006675F7 /* MainViewController.swift in Sources */,
+				89D3FDFA22560ACE002C9C6F /* Extensions.swift in Sources */,
 				89F215982244B8B8006675F7 /* AppDelegate.swift in Sources */,
+				8927F6412254A7E7009B23BB /* TaskManager.swift in Sources */,
 				6AA9E340224793720064D799 /* TaskTableViewCell.swift in Sources */,
 				8954EEEE2249C65100976628 /* Tools.swift in Sources */,
 				89102DEF2248DC5900348785 /* UploadTask.swift in Sources */,
