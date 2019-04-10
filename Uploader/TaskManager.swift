@@ -1,5 +1,13 @@
 import Foundation
 import RxSwift
+import RxCocoa
+
+enum MockImageURL: String {
+    case size573kb = "https://pixabay.com/get/e036b60f2cfd1c3e955b4704e44b429fe76ae3d01cb5164094f7c771/fox-937049.jpg?attachment"
+    case size2mb = "https://pixabay.com/get/ea36b70b2ef11c3e955b4704e44b429fe76ae3d01cb5164094f7c87a/fields-336465.jpg?attachment"
+    case size6mb = "https://pixabay.com/get/ed35b40a21f6073ecd1f4407e74e4192ea73ffd41cb4154694f2c17fa7/apple-4055926.jpg?attachment"
+    case size10mb = "https://pixabay.com/get/eb35b5072ff0033ecd1f4407e74e4192ea73ffd41cb4154694f1c97fa5/forest-2048742.jpg?attachment"
+}
 
 enum TaskState {
     case ready
@@ -18,11 +26,9 @@ class Task: Hashable {
     }
 
     let id = UUID().uuidString
-    let data: Data
     let request: URLRequest
 
-    init(data: Data, request: URLRequest) {
-        self.data = data
+    init(request: URLRequest) {
         self.request = request
     }
 }
