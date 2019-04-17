@@ -1,13 +1,11 @@
 import UIKit
 
-var normalTaskIDs = [String]()
-var group1TaskIDs = [String]()
-var group2TaskIDs = [String]()
+var mockTaskManagers = [Scene: TaskManager]()
 
 class TaskTableViewController: UITableViewController {
 
     private let scene: Scene
-    private var currentTasks = [UploadTask]()
+    private var currentTasks = [Task]()
 
     init(scene: Scene) {
         self.scene = scene
@@ -22,49 +20,33 @@ class TaskTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        NotificationCenter.default.addObserver(self, selector: #selector(groupUploadDidFinish(_:)), name: UploadManager.GroupUploadingDidFinishNotification.Name, object: nil)
-
+        tableView.tableFooterView = UIView()
         tableView.allowsSelection = false
         tableView.register(UINib.init(nibName: TaskTableViewCell.ID, bundle: nil), forCellReuseIdentifier: TaskTableViewCell.ID)
 
         loadMockTasks()
     }
-    
+
     private func loadMockTasks() {
         switch scene {
         case .normalUpload:
-            if normalTaskIDs.isEmpty {
+            guard let taskManager = mockTaskManagers[scene] else {
                 (0...4).forEach { (_) in
-                    let task = UploadTask()
-                    normalTaskIDs.append(task.id)
+                    let task = Task(request: URLRequest(url: URL(string: "xxx")!))
                     currentTasks.append(task)
                 }
-                UploadManager.shared.addTasks(currentTasks)
-            } else {
-                currentTasks = UploadManager.shared.tasks(forIdList: normalTaskIDs)
+                let taskManager = TaskManager()
+                mockTaskManagers[scene] = taskManager
+                taskManager.addTasks(currentTasks)
+                return
             }
+            currentTasks.append(contentsOf: taskManager.workingTasks.keys)
+            currentTasks.append(contentsOf: taskManager.readyTasks)
+            currentTasks.append(contentsOf: taskManager.finishedTasks)
         case .groupUpload1:
-            if group1TaskIDs.isEmpty {
-                (0...6).forEach { (_) in
-                    let task = UploadTask(groupId: scene.rawValue)
-                    group1TaskIDs.append(task.id)
-                    currentTasks.append(task)
-                }
-                UploadManager.shared.addTasks(currentTasks)
-            } else {
-                currentTasks = UploadManager.shared.tasks(forIdList: group1TaskIDs)
-            }
+            break
         case .groupUpload2:
-            if group2TaskIDs.isEmpty {
-                (0...11).forEach { (_) in
-                    let task = UploadTask(groupId: scene.rawValue)
-                    group2TaskIDs.append(task.id)
-                    currentTasks.append(task)
-                }
-                UploadManager.shared.addTasks(currentTasks)
-            } else {
-                currentTasks = UploadManager.shared.tasks(forIdList: group2TaskIDs)
-            }
+            break
         }
     }
 
