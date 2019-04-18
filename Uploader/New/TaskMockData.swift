@@ -13,10 +13,10 @@ func mockWork() -> Observable<TaskProgress> {
     let subject = PublishSubject<TaskProgress>()
     DispatchQueue.global().async {
         let observer = subject.asObserver()
-        let tryToFail = false //Bool.random()
+        let tryToFail = Bool.random()
         let failNow = { Int.random(in: 0...10) < 3 }
         for i in 0...100 {
-            Thread.sleep(forTimeInterval: TimeInterval(Int.random(in: 1...8)) * 0.05)
+            Thread.sleep(forTimeInterval: TimeInterval(Int.random(in: 1...2)) * 0.02)
             let taskProgress = (completedUnitCount: Int64(i), totalUnitCount: Int64(100))
             observer.onNext(taskProgress)
             if tryToFail && failNow() {

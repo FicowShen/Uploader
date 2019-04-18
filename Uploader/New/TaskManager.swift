@@ -3,6 +3,9 @@ import RxSwift
 
 class TaskManager {
 
+    var subscribeScheduler: SchedulerType = SerialDispatchQueueScheduler.init(qos: .userInitiated)
+    var observeScheduler: SchedulerType = MainScheduler.instance
+
     var maxWorkingTasksCount = 3
 
     private(set) var taskObservers = [Task: AnyObserver<TaskStateInfo>]()
@@ -11,19 +14,13 @@ class TaskManager {
     private(set) var finishedTasks = [Task]()
 
     func addTask(_ task: Task) {
-        let observable = Observable<TaskStateInfo>.create({ [weak self] (observer) -> Disposable in
-            self?.saveTask(task, observer: observer)
-            return Disposables.create()
-        }).share()
-        task.observable = observable
+        let publishSubject = PublishSubject<TaskStateInfo>()
+        self.saveTask(task, observer: publishSubject.asObserver())
+        task.observable = publishSubject.asObservable().share()
     }
 
     func addTasks(_ tasks: [Task]) {
-        tasks.forEach { task in
-            let publishSubject = PublishSubject<TaskStateInfo>()
-            self.saveTask(task, observer: publishSubject.asObserver())
-            task.observable = publishSubject.asObservable().share()
-        }
+        tasks.forEach { addTask($0) }
     }
 
     private func saveTask(_ task: Task, observer: AnyObserver<TaskStateInfo>) {
@@ -34,9 +31,9 @@ class TaskManager {
 
     private func putReadyTasksIntoWorkingQueue() {
         guard !readyTasks.isEmpty,
-            readyTasks.count <= maxWorkingTasksCount else { return }
+            workingTasks.count < maxWorkingTasksCount else { return }
 
-        let toWorkCount = maxWorkingTasksCount - readyTasks.count
+        let toWorkCount = maxWorkingTasksCount - workingTasks.count
         let toWorkTasks = [Task](readyTasks.prefix(toWorkCount))
 
         guard !toWorkTasks.isEmpty else { return }
@@ -56,22 +53,26 @@ class TaskManager {
 
         task.state = .ready
         observer.onNext((task, .ready))
-        task.work().subscribe(onNext: { (progress) in
-            task.state = .working(progress: progress)
-            observer.onNext((task, .working(progress: progress)))
-        }, onError: { [weak self] (error) in
-            task.state = .fail(error: NSError.makeError(message: "upload failed"))
-            observer.onNext((task, .fail(error: NSError.makeError(message: "upload failed"))))
-            observer.onCompleted()
-            task.observable = nil
-            self?.taskFinished(task)
-        }, onCompleted: { [weak self] in
-            task.state = .success
-            observer.onNext((task, .success))
-            task.observable = nil
-            observer.onCompleted()
-            self?.taskFinished(task)
-        }).disposed(by: disposeBag)
+
+        task.work()
+            .subscribeOn(subscribeScheduler)
+            .observeOn(observeScheduler)
+            .subscribe(onNext: { (progress) in
+                task.state = .working(progress)
+                observer.onNext((task, .working(progress)))
+            }, onError: { [weak self] (error) in
+                task.state = .fail(NSError.makeError(message: "upload failed"))
+                observer.onNext((task, .fail(NSError.makeError(message: "upload failed"))))
+                observer.onCompleted()
+                task.observable = nil
+                self?.taskFinished(task)
+            }, onCompleted: { [weak self] in
+                task.state = .success
+                observer.onNext((task, .success))
+                task.observable = nil
+                observer.onCompleted()
+                self?.taskFinished(task)
+            }).disposed(by: disposeBag)
     }
 
     private func taskFinished(_ task: Task) {

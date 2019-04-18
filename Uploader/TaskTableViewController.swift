@@ -1,10 +1,17 @@
 import UIKit
+import RxSwift
 
 var mockTaskManagers = [Scene: TaskManager]()
 
 class TaskTableViewController: UITableViewController {
 
+    var workingTasks: Observable<[Task]> {
+        return _workingTasks.asObservable()
+    }
+
+    private var _workingTasks = PublishSubject<[Task]>()
     private let scene: Scene
+    private let disposeBag = DisposeBag()
     private var currentTasks = [Task]()
 
     init(scene: Scene) {
@@ -28,31 +35,54 @@ class TaskTableViewController: UITableViewController {
     }
 
     private func loadMockTasks() {
-        switch scene {
-        case .normalUpload:
-            guard let taskManager = mockTaskManagers[scene] else {
-                (0...4).forEach { (_) in
-                    let task = Task(request: URLRequest(url: URL(string: "xxx")!))
-                    currentTasks.append(task)
-                }
-                let taskManager = TaskManager()
-                mockTaskManagers[scene] = taskManager
-                taskManager.addTasks(currentTasks)
-                return
+        defer {
+            currentTasks.sort { (lhs, rhs) -> Bool in
+                return lhs.timeStamp < rhs.timeStamp
             }
-            currentTasks.append(contentsOf: taskManager.workingTasks.keys)
-            currentTasks.append(contentsOf: taskManager.readyTasks)
-            currentTasks.append(contentsOf: taskManager.finishedTasks)
-        case .groupUpload1:
-            break
-        case .groupUpload2:
-            break
+            if scene != .normalUpload {
+                _workingTasks.onNext(currentTasks)
+                observeGroupProgress()
+            }
         }
+        guard let taskManager = mockTaskManagers[scene] else {
+            let taskCount: Int
+            switch scene {
+            case .normalUpload:
+                taskCount = 5
+            case .groupUpload1:
+                taskCount = 8
+            case .groupUpload2:
+                taskCount = 16
+            }
+            (1...taskCount).forEach { (_) in
+                let task = Task(request: URLRequest(url: URL(string: "xxx")!))
+                currentTasks.append(task)
+            }
+            let taskManager = TaskManager()
+            mockTaskManagers[scene] = taskManager
+            taskManager.addTasks(currentTasks)
+            return
+        }
+        currentTasks.append(contentsOf: taskManager.workingTasks.keys)
+        currentTasks.append(contentsOf: taskManager.readyTasks)
+        currentTasks.append(contentsOf: taskManager.finishedTasks)
     }
 
-    @objc
-    private func groupUploadDidFinish(_ notification: Notification) {
-        showGroupTaskNotification(notification)
+    private func observeGroupProgress() {
+        currentTasks
+            .groupObservable
+            .subscribe { [weak self] (event) in
+                switch event {
+                case .next(let element):
+                    self?.groupUploadDidFinish(element)
+                default:
+                    break
+                }
+        }.disposed(by: disposeBag)
+    }
+
+    private func groupUploadDidFinish(_ info: (successCount: Int, failureCount: Int)) {
+        showGroupTaskNotification(groupID: scene.rawValue, successCount: info.successCount, failureCount: info.failureCount)
     }
 
     // MARK: - Table view data source

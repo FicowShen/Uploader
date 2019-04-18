@@ -6,9 +6,9 @@ typealias TaskStateInfo = (task: Task, state: TaskState)
 
 enum TaskState {
     case ready
-    case working(progress: TaskProgress)
+    case working(_ progress: TaskProgress)
     case success
-    case fail(error: Error)
+    case fail(_ error: Error)
 
     var description: String {
         switch self {
@@ -54,5 +54,57 @@ class Task: TaskProtocol {
 
     func work() -> Observable<TaskProgress> {
         return mockWork()
+    }
+}
+
+extension Collection where Self.Element: Task {
+    var groupObservable: Observable<(successCount: Int, failureCount: Int)> {
+        let subject = PublishSubject<(successCount: Int, failureCount: Int)>()
+        var disposables = [Disposable]()
+        var successCount = 0
+        var failureCount = 0
+        func increaseAndCheckTaskCount(isSuccess: Bool) {
+            if isSuccess {
+                successCount += 1
+            } else {
+                failureCount += 1
+            }
+            guard (successCount + failureCount) == self.count else { return }
+            subject.onNext((successCount, failureCount))
+            subject.onCompleted()
+            disposables.forEach { $0.dispose() }
+        }
+        self.forEach { (task) in
+            guard let observable = task.observable else {
+                // task has been finished
+                switch task.state {
+                case .success:
+                    increaseAndCheckTaskCount(isSuccess: true)
+                case .fail(_):
+                    increaseAndCheckTaskCount(isSuccess: false)
+                default:
+                    break
+                }
+                return
+            }
+            let disposable = observable
+                .subscribe({ (event) in
+                    switch event {
+                    case .next(let element):
+                        switch element.state {
+                        case .success:
+                            increaseAndCheckTaskCount(isSuccess: true)
+                        case .fail(_):
+                            increaseAndCheckTaskCount(isSuccess: false)
+                        default:
+                            break
+                        }
+                    default:
+                        break
+                    }
+                })
+            disposables.append(disposable)
+        }
+        return subject.asObservable()
     }
 }

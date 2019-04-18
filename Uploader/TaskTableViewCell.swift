@@ -25,13 +25,12 @@ class TaskTableViewCell: UITableViewCell {
             disposeBag = DisposeBag()
             updateViews(forTask: task)
             updateColorForTaskState(task.state)
+
             task.observable?
-                .observeOn(MainScheduler.instance)
                 .subscribe(onNext: { [weak self] (info) in
-                    print(info.state)
                     self?.updateViews(forTask: info.task)
                     self?.updateColorForTaskState(info.state)
-                    }, onError: { (error) in
+                }, onError: { (error) in
 
                 }, onCompleted: {
 
@@ -64,7 +63,7 @@ class TaskTableViewCell: UITableViewCell {
 
     override func prepareForReuse() {
         super.prepareForReuse()
-
+        disposeBag = nil
     }
     
 }

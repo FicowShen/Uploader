@@ -1,4 +1,5 @@
 import UIKit
+import RxSwift
 
 enum Scene: String {
     case normalUpload = "Normal Upload Scene"
@@ -9,10 +10,11 @@ enum Scene: String {
 class MainViewController: UIViewController {
 
     @IBOutlet var tasksButton: [UIButton]!
+    private let disposeBag = DisposeBag()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        NotificationCenter.default.addObserver(self, selector: #selector(groupUploadDidFinish(_:)), name: UploadManager.GroupUploadingDidFinishNotification.Name, object: nil)
+
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -30,30 +32,44 @@ class MainViewController: UIViewController {
         guard let scene = Scene.init(rawValue: sender.currentTitle ?? "")
             else { fatalError() }
         let vc = TaskTableViewController.init(scene: scene)
+        vc.workingTasks.subscribe { [weak self] (event) in
+            switch event {
+            case .next(let tasks):
+                self?.observeWorkingTasks(tasks, forScene: scene)
+            default:
+                break
+            }
+        }.disposed(by: disposeBag)
         navigationController?.pushViewController(vc, animated: true)
     }
-    
-    @objc
-    private func groupUploadDidFinish(_ notification: Notification) {
-        showGroupTaskNotification(notification)
+
+    private func observeWorkingTasks(_ tasks: [Task], forScene scene: Scene) {
+        tasks
+            .groupObservable
+            .subscribe { [weak self] (event) in
+                switch event {
+                case .next(let info):
+                    self?.groupUploadDidFinish(info, forScene: scene)
+                default:
+                    break
+                }
+            }.disposed(by: disposeBag)
+    }
+
+    private func groupUploadDidFinish(_ info: (successCount: Int, failureCount: Int), forScene scene: Scene) {
+        showGroupTaskNotification(groupID: scene.rawValue, successCount: info.successCount, failureCount: info.failureCount)
     }
 
 }
 
 extension UIViewController {
 
-    func showGroupTaskNotification(_ notification: Notification) {
-        guard let userInfo = notification.userInfo,
-            let info = userInfo[UploadManager.GroupUploadingDidFinishNotification.UserInfoKey] as? [String: Any],
-            let groupID = info[UploadManager.GroupUploadingDidFinishNotification.GroupIDKey] as? String,
-            let succeededCount = info[UploadManager.GroupUploadingDidFinishNotification.SucceededCountKey] as? Int,
-            let failedCount = info[UploadManager.GroupUploadingDidFinishNotification.FailedCountKey] as? Int else { return }
-
+    func showGroupTaskNotification(groupID: String, successCount: Int, failureCount: Int) {
         guard let _ = self.view.window else { return }
         let msg = """
         \(groupID) 已完成！
-        成功：\(succeededCount) 个任务，
-        失败：\(failedCount) 个任务。
+        成功：\(successCount) 个任务，
+        失败：\(failureCount) 个任务。
         """
         UIViewController.showAlert(msg: msg)
         DLog(msg)
@@ -62,7 +78,7 @@ extension UIViewController {
     static func showAlert(msg: String) {
         let topMostVC = topMostViewController()
         if let _ = topMostVC.presentedViewController {
-            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1), execute: {
+            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2), execute: {
                 self.showAlert(msg: msg)
             })
             return
