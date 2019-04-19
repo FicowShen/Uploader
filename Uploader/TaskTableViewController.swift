@@ -40,8 +40,8 @@ class TaskTableViewController: UITableViewController {
                 return lhs.timeStamp < rhs.timeStamp
             }
             if scene != .normalUpload {
-                _workingTasks.onNext(currentTasks)
                 observeGroupProgress()
+                _workingTasks.onNext(currentTasks)
             }
         }
         guard let taskManager = mockTaskManagers[scene] else {
@@ -78,7 +78,7 @@ class TaskTableViewController: UITableViewController {
                 default:
                     break
                 }
-        }.disposed(by: disposeBag)
+            }.disposed(by: disposeBag)
     }
 
     private func groupUploadDidFinish(_ info: (successCount: Int, failureCount: Int)) {

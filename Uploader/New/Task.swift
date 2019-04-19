@@ -28,6 +28,7 @@ protocol TaskProtocol: Hashable {
     var id: String { get }
     var timeStamp: TimeInterval { get }
     var request: URLRequest { get }
+    var state: TaskState { get set }
     var observable: Observable<TaskStateInfo>? { get set }
 
     func work() -> Observable<TaskProgress>
@@ -57,7 +58,7 @@ class Task: TaskProtocol {
     }
 }
 
-extension Collection where Self.Element: Task {
+extension Collection where Self.Element: TaskProtocol {
     var groupObservable: Observable<(successCount: Int, failureCount: Int)> {
         let subject = PublishSubject<(successCount: Int, failureCount: Int)>()
         var disposables = [Disposable]()
