@@ -63,9 +63,7 @@ class TaskTableViewController: UITableViewController {
             taskManager.addTasks(currentTasks)
             return
         }
-        currentTasks.append(contentsOf: taskManager.workingTasks.keys)
-        currentTasks.append(contentsOf: taskManager.readyTasks)
-        currentTasks.append(contentsOf: taskManager.finishedTasks)
+        currentTasks = taskManager.currentTasks
     }
 
     private func observeGroupProgress() {

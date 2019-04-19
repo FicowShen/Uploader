@@ -1,5 +1,6 @@
 import UIKit
 import RxSwift
+import RxCocoa
 
 enum Scene: String {
     case normalUpload = "Normal Upload Scene"
@@ -15,6 +16,11 @@ class MainViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        tasksButton.forEach { (button) in
+            button.rx.tap.subscribe({ [weak self] (_) in
+                self?.buttonTapped(button)
+            }).disposed(by: disposeBag)
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -27,8 +33,7 @@ class MainViewController: UIViewController {
         navigationController?.setNavigationBarHidden(false, animated: animated)
     }
 
-    @IBAction func buttonTapped(_ sender: UIButton) {
-
+    private func buttonTapped(_ sender: UIButton) {
         guard let scene = Scene.init(rawValue: sender.currentTitle ?? "")
             else { fatalError() }
         let vc = TaskTableViewController.init(scene: scene)
@@ -36,8 +41,7 @@ class MainViewController: UIViewController {
             switch event {
             case .next(let tasks):
                 self?.observeWorkingTasks(tasks, forScene: scene)
-            default:
-                break
+            default: break
             }
         }.disposed(by: disposeBag)
         navigationController?.pushViewController(vc, animated: true)
@@ -50,8 +54,7 @@ class MainViewController: UIViewController {
                 switch event {
                 case .next(let info):
                     self?.groupUploadDidFinish(info, forScene: scene)
-                default:
-                    break
+                default: break
                 }
             }.disposed(by: disposeBag)
     }

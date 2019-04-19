@@ -8,10 +8,14 @@ class TaskManager {
 
     var maxWorkingTasksCount = 3
 
-    private(set) var taskObservers = [Task: AnyObserver<TaskStateInfo>]()
-    private(set) var readyTasks = [Task]()
-    private(set) var workingTasks = [Task: DisposeBag]()
-    private(set) var finishedTasks = [Task]()
+    private var taskObservers = [Task: AnyObserver<TaskStateInfo>]()
+    private var readyTasks = [Task]()
+    private var workingTasks = [Task: DisposeBag]()
+    private var finishedTasks = [Task]()
+
+    var currentTasks: [Task] {
+        return workingTasks.keys + readyTasks + finishedTasks
+    }
 
     func addTask(_ task: Task) {
         let publishSubject = PublishSubject<TaskStateInfo>()

@@ -22,8 +22,8 @@ extension UIViewController {
     static func showAlert(msg: String, fromViewController viewController: UIViewController? = nil) {
         let topMostVC = viewController ?? topMostViewController()
         if let _ = topMostVC.presentedViewController {
-            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2), execute: {
-                self.showAlert(msg: msg, fromViewController: topMostVC)
+            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(3), execute: {
+                self.showAlert(msg: msg)
             })
             return
         }
