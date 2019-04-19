@@ -1,6 +1,5 @@
 import Foundation
 import RxSwift
-import RxCocoa
 
 enum MockImageURL: String {
     case size573kb = "https://pixabay.com/get/e036b60f2cfd1c3e955b4704e44b429fe76ae3d01cb5164094f7c771/fox-937049.jpg?attachment"
@@ -27,4 +26,10 @@ func mockWork() -> Observable<TaskProgress> {
         observer.onCompleted()
     }
     return subject.asObservable()
+}
+
+final class MockTask: Task {
+    override func work() -> Observable<TaskProgress> {
+        return mockWork()
+    }
 }

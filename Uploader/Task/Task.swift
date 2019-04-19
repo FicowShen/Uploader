@@ -54,7 +54,7 @@ class Task: TaskProtocol {
     }
 
     func work() -> Observable<TaskProgress> {
-        return mockWork()
+        fatalError("Implement your work in subclass.")
     }
 }
 

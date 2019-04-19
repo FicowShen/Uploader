@@ -11,12 +11,13 @@
 		6AA9E340224793720064D799 /* TaskTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6AA9E33E224793720064D799 /* TaskTableViewCell.swift */; };
 		6AA9E341224793720064D799 /* TaskTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6AA9E33F224793720064D799 /* TaskTableViewCell.xib */; };
 		6B63954DB043850AF2146611 /* Pods_UploaderTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3FB5C142838D3AD99F677111 /* Pods_UploaderTests.framework */; };
-		89102DEF2248DC5900348785 /* UploadTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89102DEE2248DC5900348785 /* UploadTask.swift */; };
 		891B3DED22609C0500837D55 /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = 891B3DEC22609C0500837D55 /* Task.swift */; };
-		891B3DF022609C3B00837D55 /* TaskMockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 891B3DEF22609C3B00837D55 /* TaskMockData.swift */; };
 		8927F6412254A7E7009B23BB /* TaskManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8927F6402254A7E7009B23BB /* TaskManager.swift */; };
 		8954EEEE2249C65100976628 /* Tools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8954EEED2249C65100976628 /* Tools.swift */; };
 		89D3FDFA22560ACE002C9C6F /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89D3FDF922560ACE002C9C6F /* Extensions.swift */; };
+		89DD7A782269DB9A00AFDE4E /* MockTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89DD7A772269DB9A00AFDE4E /* MockTask.swift */; };
+		89DD7A7A2269DC1400AFDE4E /* UploadTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89DD7A792269DC1400AFDE4E /* UploadTask.swift */; };
+		89DD7A7D2269DE0C00AFDE4E /* DownloadTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89DD7A7C2269DE0C00AFDE4E /* DownloadTask.swift */; };
 		89F215982244B8B8006675F7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89F215972244B8B8006675F7 /* AppDelegate.swift */; };
 		89F2159A2244B8B8006675F7 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89F215992244B8B8006675F7 /* MainViewController.swift */; };
 		89F2159D2244B8B8006675F7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 89F2159B2244B8B8006675F7 /* Main.storyboard */; };
@@ -24,7 +25,6 @@
 		89F215A22244B8B9006675F7 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 89F215A02244B8B9006675F7 /* LaunchScreen.storyboard */; };
 		89F215AD2244B8B9006675F7 /* UploaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89F215AC2244B8B9006675F7 /* UploaderTests.swift */; };
 		89F215B82244B8B9006675F7 /* UploaderUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89F215B72244B8B9006675F7 /* UploaderUITests.swift */; };
-		89F215C62244B8D5006675F7 /* UploadManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89F215C52244B8D5006675F7 /* UploadManager.swift */; };
 		BB2102DEE5B76AB299D571EF /* Pods_UploaderUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 05419EA4C130D65CBA524ABF /* Pods_UploaderUITests.framework */; };
 		E923A4FF3954CBA58607958F /* Pods_Uploader.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4931AFC72355B23F23CE406D /* Pods_Uploader.framework */; };
 /* End PBXBuildFile section */
@@ -57,12 +57,13 @@
 		6AA9E33E224793720064D799 /* TaskTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTableViewCell.swift; sourceTree = "<group>"; };
 		6AA9E33F224793720064D799 /* TaskTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TaskTableViewCell.xib; sourceTree = "<group>"; };
 		6C95FC1DBCD09BA82EC72783 /* Pods-UploaderTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UploaderTests.debug.xcconfig"; path = "Target Support Files/Pods-UploaderTests/Pods-UploaderTests.debug.xcconfig"; sourceTree = "<group>"; };
-		89102DEE2248DC5900348785 /* UploadTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadTask.swift; sourceTree = "<group>"; };
 		891B3DEC22609C0500837D55 /* Task.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
-		891B3DEF22609C3B00837D55 /* TaskMockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskMockData.swift; sourceTree = "<group>"; };
 		8927F6402254A7E7009B23BB /* TaskManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskManager.swift; sourceTree = "<group>"; };
 		8954EEED2249C65100976628 /* Tools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tools.swift; sourceTree = "<group>"; };
 		89D3FDF922560ACE002C9C6F /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		89DD7A772269DB9A00AFDE4E /* MockTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockTask.swift; sourceTree = "<group>"; };
+		89DD7A792269DC1400AFDE4E /* UploadTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadTask.swift; sourceTree = "<group>"; };
+		89DD7A7C2269DE0C00AFDE4E /* DownloadTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadTask.swift; sourceTree = "<group>"; };
 		89F215942244B8B8006675F7 /* Uploader.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Uploader.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		89F215972244B8B8006675F7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		89F215992244B8B8006675F7 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
@@ -76,7 +77,6 @@
 		89F215B32244B8B9006675F7 /* UploaderUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UploaderUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		89F215B72244B8B9006675F7 /* UploaderUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploaderUITests.swift; sourceTree = "<group>"; };
 		89F215B92244B8B9006675F7 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		89F215C52244B8D5006675F7 /* UploadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadManager.swift; sourceTree = "<group>"; };
 		A9784C84631D480BE8206B85 /* Pods-Uploader.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Uploader.release.xcconfig"; path = "Target Support Files/Pods-Uploader/Pods-Uploader.release.xcconfig"; sourceTree = "<group>"; };
 		B1B5DECFC4FF636AE1901254 /* Pods-UploaderUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UploaderUITests.debug.xcconfig"; path = "Target Support Files/Pods-UploaderUITests/Pods-UploaderUITests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -141,23 +141,23 @@
 			path = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		891B3DEB22609BE900837D55 /* New */ = {
+		891B3DEB22609BE900837D55 /* Task */ = {
 			isa = PBXGroup;
 			children = (
 				891B3DEC22609C0500837D55 /* Task.swift */,
-				8927F6402254A7E7009B23BB /* TaskManager.swift */,
-				891B3DEF22609C3B00837D55 /* TaskMockData.swift */,
+				89DD7A772269DB9A00AFDE4E /* MockTask.swift */,
+				89DD7A792269DC1400AFDE4E /* UploadTask.swift */,
+				89DD7A7C2269DE0C00AFDE4E /* DownloadTask.swift */,
 			);
-			path = New;
+			path = Task;
 			sourceTree = "<group>";
 		};
-		8927F63F2254A785009B23BB /* Legacy */ = {
+		89DD7A7B2269DC9500AFDE4E /* TaskManager */ = {
 			isa = PBXGroup;
 			children = (
-				89F215C52244B8D5006675F7 /* UploadManager.swift */,
-				89102DEE2248DC5900348785 /* UploadTask.swift */,
+				8927F6402254A7E7009B23BB /* TaskManager.swift */,
 			);
-			path = Legacy;
+			path = TaskManager;
 			sourceTree = "<group>";
 		};
 		89F2158B2244B8B8006675F7 = {
@@ -185,8 +185,8 @@
 		89F215962244B8B8006675F7 /* Uploader */ = {
 			isa = PBXGroup;
 			children = (
-				8927F63F2254A785009B23BB /* Legacy */,
-				891B3DEB22609BE900837D55 /* New */,
+				89DD7A7B2269DC9500AFDE4E /* TaskManager */,
+				891B3DEB22609BE900837D55 /* Task */,
 				6AA9E342224793AF0064D799 /* Supporting Files */,
 				89F215A32244B8B9006675F7 /* Info.plist */,
 				89F215972244B8B8006675F7 /* AppDelegate.swift */,
@@ -455,12 +455,12 @@
 				891B3DED22609C0500837D55 /* Task.swift in Sources */,
 				89F215982244B8B8006675F7 /* AppDelegate.swift in Sources */,
 				8927F6412254A7E7009B23BB /* TaskManager.swift in Sources */,
-				891B3DF022609C3B00837D55 /* TaskMockData.swift in Sources */,
 				6AA9E340224793720064D799 /* TaskTableViewCell.swift in Sources */,
 				8954EEEE2249C65100976628 /* Tools.swift in Sources */,
-				89102DEF2248DC5900348785 /* UploadTask.swift in Sources */,
-				89F215C62244B8D5006675F7 /* UploadManager.swift in Sources */,
+				89DD7A7D2269DE0C00AFDE4E /* DownloadTask.swift in Sources */,
+				89DD7A782269DB9A00AFDE4E /* MockTask.swift in Sources */,
 				6AA9E33D22478CE30064D799 /* TaskTableViewController.swift in Sources */,
+				89DD7A7A2269DC1400AFDE4E /* UploadTask.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

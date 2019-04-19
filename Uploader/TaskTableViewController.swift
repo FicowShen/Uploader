@@ -55,7 +55,7 @@ class TaskTableViewController: UITableViewController {
                 taskCount = 16
             }
             (1...taskCount).forEach { (_) in
-                let task = Task(request: URLRequest(url: URL(string: "xxx")!))
+                let task = MockTask(request: URLRequest(url: URL(string: "xxx")!))
                 currentTasks.append(task)
             }
             let taskManager = TaskManager()
