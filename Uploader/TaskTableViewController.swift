@@ -54,8 +54,9 @@ class TaskTableViewController: UITableViewController {
             case .groupUpload2:
                 taskCount = 16
             }
+            let mockImageURL: String = "https://pixabay.com/get/ea32b5062bf0053ecd1f4407e74e4192ea73ffd41cb4174095f3c17da7/streetwear-3749344.jpg?attachment"
             (1...taskCount).forEach { (_) in
-                let task = MockTask(request: URLRequest(url: URL(string: "xxx")!))
+                let task = DownloadTask(request: URLRequest(url: URL(string: mockImageURL)!))
                 currentTasks.append(task)
             }
             let taskManager = TaskManager()

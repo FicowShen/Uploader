@@ -27,7 +27,6 @@ enum TaskState {
 protocol TaskProtocol: Hashable {
     var id: String { get }
     var timeStamp: TimeInterval { get }
-    var request: URLRequest { get }
     var state: TaskState { get set }
     var observable: Observable<TaskStateInfo>? { get set }
 
@@ -45,13 +44,8 @@ class Task: TaskProtocol {
 
     let id = UUID().uuidString
     let timeStamp: TimeInterval = Date().timeIntervalSince1970
-    let request: URLRequest
     var state: TaskState = .ready
     var observable: Observable<TaskStateInfo>?
-
-    init(request: URLRequest) {
-        self.request = request
-    }
 
     func work() -> Observable<TaskProgress> {
         fatalError("Implement your work in subclass.")

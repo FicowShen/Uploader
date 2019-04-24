@@ -19,7 +19,7 @@ class TaskManager {
 
     func addTask(_ task: Task) {
         let publishSubject = PublishSubject<TaskStateInfo>()
-        self.saveTask(task, observer: publishSubject.asObserver())
+        saveTask(task, observer: publishSubject.asObserver())
         task.observable = publishSubject.asObservable().share()
     }
 
@@ -29,7 +29,7 @@ class TaskManager {
 
     private func saveTask(_ task: Task, observer: AnyObserver<TaskStateInfo>) {
         readyTasks.append(task)
-        self.taskObservers[task] = observer
+        taskObservers[task] = observer
         putReadyTasksIntoWorkingQueue()
     }
 
