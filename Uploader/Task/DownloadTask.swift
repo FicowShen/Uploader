@@ -6,6 +6,7 @@ import RxAlamofire
 final class DownloadTask: Task {
 
     let request: URLRequest
+    var data: Data?
     private var bag: DisposeBag?
 
     init(request: URLRequest) {
@@ -18,25 +19,36 @@ final class DownloadTask: Task {
         let bag = DisposeBag()
         self.bag = bag
 
-        SessionManager.default.rx
+        let observable = SessionManager.default.rx
             .request(urlRequest: self.request)
             .validate(statusCode: 200 ..< 300)
-            .flatMap { (request) -> Observable<RxProgress> in
-                return request.rx.progress()
-            }
+
+        observable
+            .flatMap { $0.rx.progress() }
             .observeOn(MainScheduler.instance)
             .subscribe { [weak self] (event) in
                 switch event {
-                case .next(let element):
-                    let taskProgress = (completedUnitCount: element.bytesWritten, totalUnitCount: element.totalBytes)
+                case .next(let progress):
+                    guard progress.totalBytes != 0 else { return }
+                    let taskProgress = (completedUnitCount: progress.bytesWritten, totalUnitCount: progress.totalBytes)
                     observer.onNext(taskProgress)
                 case .error(let error):
                     observer.onError(error)
-                    self?.bag = nil
                 case .completed:
+                    break
+                }
+            }.disposed(by: bag)
+
+        observable
+            .flatMap { $0.rx.data() }
+            .observeOn(MainScheduler.instance)
+            .subscribe { [weak self] (event) in
+                defer {
                     observer.onCompleted()
                     self?.bag = nil
                 }
+                guard let data = event.element else { return }
+                self?.data = data
             }.disposed(by: bag)
 
         return subject.asObservable()

@@ -4,12 +4,31 @@ import RxSwift
 class TaskTableViewCell: UITableViewCell {
 
     static let ID = String(describing: TaskTableViewCell.self)
-    static let Height: CGFloat = 86
     
     @IBOutlet weak var orderLabel: UILabel!
     @IBOutlet weak var idLabel: UILabel!
     @IBOutlet weak var progressView: UIProgressView!
     @IBOutlet weak var stateLabel: UILabel!
+    @IBOutlet weak var iconView: UIImageView!
+
+    private var imageContainerHeightForImage: CGFloat = 0
+    @IBOutlet weak var imageContainerHeight: NSLayoutConstraint! {
+        didSet {
+            imageContainerHeightForImage = imageContainerHeight.constant
+        }
+    }
+
+    private var displayImage: UIImage? {
+        didSet {
+            defer { setNeedsUpdateConstraints() }
+            guard let image = displayImage else {
+                imageContainerHeight.constant = 0
+                return
+            }
+            iconView.image = image
+            imageContainerHeight.constant = imageContainerHeightForImage
+        }
+    }
 
     var disposeBag: DisposeBag!
     
@@ -19,21 +38,22 @@ class TaskTableViewCell: UITableViewCell {
         }
     }
     
-    var task: Task? {
+    var task: DownloadTask? {
         didSet {
             guard let task = task else { return }
             disposeBag = DisposeBag()
             updateViews(forTask: task)
             updateColorForTaskState(task.state)
+            updateImage(forTask: task)
 
             task.observable?
                 .subscribe(onNext: { [weak self] (info) in
                     self?.updateViews(forTask: info.task)
                     self?.updateColorForTaskState(info.state)
-                }, onError: { (error) in
-
-                }, onCompleted: {
-
+                }, onError: { [weak self] (error) in
+                    self?.displayImage = nil
+                }, onCompleted: { [weak self, unowned task] in
+                    self?.updateImage(forTask: task)
                 }).disposed(by: disposeBag)
         }
     }
@@ -41,6 +61,16 @@ class TaskTableViewCell: UITableViewCell {
     private func updateViews(forTask task: Task) {
         idLabel.text = task.id
         stateLabel.text = task.state.description
+    }
+
+    private func updateImage(forTask task: Task) {
+        guard let task = task as? DownloadTask,
+            let data = task.data,
+            let image = UIImage(data: data) else {
+                displayImage = nil
+                return
+        }
+        displayImage = image
     }
     
     private func updateColorForTaskState(_ state: TaskState) {
@@ -64,6 +94,7 @@ class TaskTableViewCell: UITableViewCell {
     override func prepareForReuse() {
         super.prepareForReuse()
         disposeBag = nil
+        iconView.image = nil
     }
     
 }

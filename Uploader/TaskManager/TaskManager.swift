@@ -1,33 +1,32 @@
 import Foundation
 import RxSwift
 
-class TaskManager {
+class TaskManager<T: Task> {
 
     var subscribeScheduler: SchedulerType = SerialDispatchQueueScheduler.init(qos: .userInitiated)
     var observeScheduler: SchedulerType = MainScheduler.instance
-
     var maxWorkingTasksCount = 3
 
-    private var taskObservers = [Task: AnyObserver<TaskStateInfo>]()
-    private var readyTasks = [Task]()
-    private var workingTasks = [Task: DisposeBag]()
-    private var finishedTasks = [Task]()
+    private var taskObservers = [T: AnyObserver<TaskStateInfo>]()
+    private var readyTasks = [T]()
+    private var workingTasks = [T: DisposeBag]()
+    private var finishedTasks = [T]()
 
-    var currentTasks: [Task] {
+    var currentTasks: [T] {
         return workingTasks.keys + readyTasks + finishedTasks
     }
 
-    func addTask(_ task: Task) {
+    func addTask(_ task: T) {
         let publishSubject = PublishSubject<TaskStateInfo>()
         saveTask(task, observer: publishSubject.asObserver())
         task.observable = publishSubject.asObservable().share()
     }
 
-    func addTasks(_ tasks: [Task]) {
+    func addTasks(_ tasks: [T]) {
         tasks.forEach { addTask($0) }
     }
 
-    private func saveTask(_ task: Task, observer: AnyObserver<TaskStateInfo>) {
+    private func saveTask(_ task: T, observer: AnyObserver<TaskStateInfo>) {
         readyTasks.append(task)
         taskObservers[task] = observer
         putReadyTasksIntoWorkingQueue()
@@ -38,7 +37,7 @@ class TaskManager {
             workingTasks.count < maxWorkingTasksCount else { return }
 
         let toWorkCount = maxWorkingTasksCount - workingTasks.count
-        let toWorkTasks = [Task](readyTasks.prefix(toWorkCount))
+        let toWorkTasks = [T](readyTasks.prefix(toWorkCount))
 
         guard !toWorkTasks.isEmpty else { return }
         readyTasks.removeFirst(min(readyTasks.count, toWorkTasks.count))
@@ -49,7 +48,7 @@ class TaskManager {
         }
     }
 
-    private func startWork(_ task: Task) {
+    private func startWork(_ task: T) {
         guard let observer = taskObservers[task] else { return }
 
         let disposeBag = DisposeBag()
@@ -79,7 +78,7 @@ class TaskManager {
             }).disposed(by: disposeBag)
     }
 
-    private func taskFinished(_ task: Task) {
+    private func taskFinished(_ task: T) {
         workingTasks[task] = nil
         taskObservers[task] = nil
         finishedTasks.append(task)

@@ -6,16 +6,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "Uploader/MainViewController.swift"
-            timestampString = "577363134.368692"
+            filePath = "Uploader/TaskTableViewCell.swift"
+            timestampString = "577882569.617939"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "63"
-            endingLineNumber = "63"
-            landmarkName = "groupUploadDidFinish(_:forScene:)"
+            startingLineNumber = "70"
+            endingLineNumber = "70"
+            landmarkName = "updateImage(forTask:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
