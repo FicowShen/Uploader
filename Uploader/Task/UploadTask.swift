@@ -39,7 +39,7 @@ final class UploadTask: Task {
             }.disposed(by: bag)
 
         observable
-            .flatMap { $0.rx.data() }
+            .flatMap { $0.rx.responseData() }
             .observeOn(MainScheduler.instance)
             .subscribe { (_) in
                 observer.onCompleted()

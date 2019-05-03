@@ -1,19 +1,23 @@
 import UIKit
 import RxSwift
 
-var mockTaskManagers = [Scene: TaskManager<DownloadTask>]()
+var mockTaskManagers = [Scene: TaskManager<Task>]()
 let mockImageURLs = ["https://cdn.dribbble.com/users/4859/screenshots/6425163/story-1-1600-1200.png", "https://cdn.dribbble.com/users/14268/screenshots/6426256/cpin2.png", "https://img.zcool.cn/community/0107a55cb46cc2a801208f8b40ac5a.jpg@1280w_1l_2o_100sh.jpg", "https://img.zcool.cn/community/0176625cb46cc2a801214168eee26a.jpg@1280w_1l_2o_100sh.jpg", "https://img.zcool.cn/community/0139865cb46cc2a801208f8b3977da.jpg@1280w_1l_2o_100sh.jpg", "https://img.zcool.cn/community/0115875cb46cc2a8012141682c955a.jpg@1280w_1l_2o_100sh.jpg"]
+
+let mockUploadURL = "http://172.26.10.89:8000/TestUpload/"
 
 class TaskTableViewController: UITableViewController {
 
-    var workingTasks: Observable<[DownloadTask]> {
+    var workingTasks: Observable<[Task]> {
         return _workingTasks.asObservable()
     }
 
-    private var _workingTasks = PublishSubject<[DownloadTask]>()
+    private var _workingTasks = PublishSubject<[Task]>()
     private let scene: Scene
     private let disposeBag = DisposeBag()
-    private var currentTasks = [DownloadTask]()
+    private var currentTasks = [Task]()
+
+    private let picker = UIImagePickerController()
 
     init(scene: Scene) {
         self.scene = scene
@@ -34,8 +38,13 @@ class TaskTableViewController: UITableViewController {
         tableView.allowsSelection = false
         tableView.register(UINib.init(nibName: TaskTableViewCell.ID, bundle: nil), forCellReuseIdentifier: TaskTableViewCell.ID)
 
-        loadMockTasks()
+//        loadMockTasks()
+        delay(seconds: 0.5) {
+            self.test()
+        }
     }
+
+
 
     private func loadMockTasks() {
         defer {
@@ -64,7 +73,7 @@ class TaskTableViewController: UITableViewController {
                 let task = DownloadTask(request: request)
                 currentTasks.append(task)
             }
-            let taskManager = TaskManager<DownloadTask>()
+            let taskManager = TaskManager<Task>()
             mockTaskManagers[scene] = taskManager
             taskManager.addTasks(currentTasks)
             return
@@ -109,5 +118,36 @@ class TaskTableViewController: UITableViewController {
         cell.task = currentTasks[indexPath.row]
     }
 
+}
+
+extension TaskTableViewController: UIImagePickerControllerDelegate & UINavigationControllerDelegate {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+
+        defer { picker.dismiss(animated: true, completion: nil) }
+        guard let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else { return }
+        self.upload(image: image)
+    }
+
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true, completion: nil)
+    }
+
+    func test() {
+        picker.delegate = self
+        picker.sourceType = .photoLibrary
+        present(picker, animated: true, completion: nil)
+    }
+
+    func upload(image: UIImage) {
+        guard let url = URL.init(string: mockUploadURL), let data = image.jpegData(compressionQuality: 1) else { return }
+        var request = URLRequest.init(url: url)
+        request.httpMethod = "POST"
+        let task = UploadTask(request: request, data: data)
+        currentTasks.append(task)
+        self.tableView.reloadData()
+        let taskManager = TaskManager<Task>()
+        mockTaskManagers[scene] = taskManager
+        taskManager.addTasks(currentTasks)
+    }
 }
 

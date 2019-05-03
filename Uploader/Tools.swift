@@ -16,3 +16,11 @@ func DLog<T>(_ msg: T, file: String = #file, function: String = #function, line:
         print(output)
     #endif
 }
+
+func delay(on queue: DispatchQueue = .main,
+           seconds: TimeInterval,
+           block: @escaping (() -> Void)){
+    queue.asyncAfter(deadline: .now() + seconds) {
+        block()
+    }
+}

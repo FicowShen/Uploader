@@ -31,7 +31,7 @@ class TaskTableViewCell: UITableViewCell {
         }
     }
     
-    var task: DownloadTask? {
+    var task: Task? {
         didSet {
             guard let task = task else { return }
             disposeBag = DisposeBag()
