@@ -146,8 +146,8 @@
 			children = (
 				891B3DEC22609C0500837D55 /* Task.swift */,
 				89DD7A772269DB9A00AFDE4E /* MockTask.swift */,
-				89DD7A792269DC1400AFDE4E /* UploadTask.swift */,
 				89DD7A7C2269DE0C00AFDE4E /* DownloadTask.swift */,
+				89DD7A792269DC1400AFDE4E /* UploadTask.swift */,
 			);
 			path = Task;
 			sourceTree = "<group>";
