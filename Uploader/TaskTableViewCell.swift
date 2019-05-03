@@ -10,23 +10,16 @@ class TaskTableViewCell: UITableViewCell {
     @IBOutlet weak var progressView: UIProgressView!
     @IBOutlet weak var stateLabel: UILabel!
     @IBOutlet weak var iconView: UIImageView!
-
-    private var imageContainerHeightForImage: CGFloat = 0
-    @IBOutlet weak var imageContainerHeight: NSLayoutConstraint! {
-        didSet {
-            imageContainerHeightForImage = imageContainerHeight.constant
-        }
-    }
+    @IBOutlet weak var indicatorView: UIActivityIndicatorView!
 
     private var displayImage: UIImage? {
         didSet {
-            defer { setNeedsUpdateConstraints() }
-            guard let image = displayImage else {
-                imageContainerHeight.constant = 0
-                return
+            iconView.image = displayImage
+            if displayImage == nil {
+                indicatorView.startAnimating()
+            } else {
+                indicatorView.stopAnimating()
             }
-            iconView.image = image
-            imageContainerHeight.constant = imageContainerHeightForImage
         }
     }
 
@@ -96,5 +89,5 @@ class TaskTableViewCell: UITableViewCell {
         disposeBag = nil
         iconView.image = nil
     }
-    
+
 }
