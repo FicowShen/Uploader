@@ -3,12 +3,12 @@ import RxSwift
 import RxCocoa
 
 enum Scene: String {
-    case normalUpload = "Normal Upload Scene"
-    case groupUpload1 = "Group Upload Scene 1"
-    case groupUpload2 = "Group Upload Scene 2"
+    case normalTask = "Normal Task"
+    case downloadTask = "Download Task"
+    case uploadTask = "Upload Task"
 }
 
-class MainViewController: UIViewController {
+class TaskTypeViewController: UIViewController {
 
     @IBOutlet var tasksButton: [UIButton]!
     private let disposeBag = DisposeBag()
@@ -17,8 +17,8 @@ class MainViewController: UIViewController {
         super.viewDidLoad()
 
         tasksButton.forEach { (button) in
-            button.rx.tap.subscribe({ [weak self] (_) in
-                self?.buttonTapped(button)
+            button.rx.tap.subscribe({ [unowned self] (_) in
+                self.buttonTapped(button)
             }).disposed(by: disposeBag)
         }
     }
@@ -37,10 +37,10 @@ class MainViewController: UIViewController {
         guard let scene = Scene.init(rawValue: sender.currentTitle ?? "")
             else { fatalError() }
         let vc = TaskTableViewController.init(scene: scene)
-        vc.workingTasks.subscribe { [weak self] (event) in
+        vc.workingTasks.subscribe { [unowned self] (event) in
             switch event {
             case .next(let tasks):
-                self?.observeWorkingTasks(tasks, forScene: scene)
+                self.observeWorkingTasks(tasks, forScene: scene)
             default: break
             }
         }.disposed(by: disposeBag)
@@ -53,13 +53,13 @@ class MainViewController: UIViewController {
             .subscribe { [weak self] (event) in
                 switch event {
                 case .next(let info):
-                    self?.groupUploadDidFinish(info, forScene: scene)
+                    self?.groupTaskDidFinish(info, forScene: scene)
                 default: break
                 }
             }.disposed(by: disposeBag)
     }
 
-    private func groupUploadDidFinish(_ info: (successCount: Int, failureCount: Int), forScene scene: Scene) {
+    private func groupTaskDidFinish(_ info: (successCount: Int, failureCount: Int), forScene scene: Scene) {
         showGroupTaskNotification(groupID: scene.rawValue, successCount: info.successCount, failureCount: info.failureCount)
     }
 

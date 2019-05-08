@@ -10,52 +10,52 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Main View Controller-->
-        <scene sceneID="tne-QT-ifu">
+        <!--Task Type View Controller-->
+        <scene sceneID="4aF-yh-W1z">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="MainViewController" customModule="Uploader" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
+                <viewController id="3la-0h-9Bf" customClass="TaskTypeViewController" customModule="Uploader" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="yqq-e9-MOb">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="OVO-Vl-LcO">
-                                <rect key="frame" x="101" y="276" width="173" height="115"/>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="12" translatesAutoresizingMaskIntoConstraints="NO" id="OLm-mQ-2AU">
+                                <rect key="frame" x="129.5" y="272" width="116" height="123"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RQn-xd-p17">
-                                        <rect key="frame" x="0.0" y="0.0" width="173" height="33"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GIh-SR-qWy">
+                                        <rect key="frame" x="10.5" y="0.0" width="95" height="33"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <state key="normal" title="Normal Upload Scene"/>
+                                        <state key="normal" title="Normal Task"/>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ZKw-0V-eJ1">
-                                        <rect key="frame" x="0.0" y="41" width="173" height="33"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ltG-5C-qmz">
+                                        <rect key="frame" x="0.0" y="45" width="116" height="33"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <state key="normal" title="Group Upload Scene 1"/>
+                                        <state key="normal" title="Download Task"/>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="feK-ko-amS">
-                                        <rect key="frame" x="0.0" y="82" width="173" height="33"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jug-a0-R3x">
+                                        <rect key="frame" x="10.5" y="90" width="95" height="33"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                        <state key="normal" title="Group Upload Scene 2"/>
+                                        <state key="normal" title="Upload Task"/>
                                     </button>
                                 </subviews>
                             </stackView>
                         </subviews>
-                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
-                            <constraint firstItem="OVO-Vl-LcO" firstAttribute="centerY" secondItem="8bC-Xf-vdC" secondAttribute="centerY" id="RpP-bL-1x1"/>
-                            <constraint firstItem="OVO-Vl-LcO" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="ili-e4-hTM"/>
+                            <constraint firstItem="OLm-mQ-2AU" firstAttribute="centerX" secondItem="yqq-e9-MOb" secondAttribute="centerX" id="w46-lM-4nV"/>
+                            <constraint firstItem="OLm-mQ-2AU" firstAttribute="centerY" secondItem="yqq-e9-MOb" secondAttribute="centerY" id="zPn-vC-3cY"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <viewLayoutGuide key="safeArea" id="VQi-vG-guq"/>
                     </view>
-                    <navigationItem key="navigationItem" id="Q3h-xF-PJ9"/>
+                    <navigationItem key="navigationItem" id="fM9-0a-F3c"/>
                     <connections>
-                        <outletCollection property="tasksButton" destination="RQn-xd-p17" collectionClass="NSMutableArray" id="i8R-qa-SQI"/>
-                        <outletCollection property="tasksButton" destination="ZKw-0V-eJ1" collectionClass="NSMutableArray" id="k1P-pa-3sP"/>
-                        <outletCollection property="tasksButton" destination="feK-ko-amS" collectionClass="NSMutableArray" id="bHQ-zd-0Th"/>
+                        <outletCollection property="tasksButton" destination="GIh-SR-qWy" collectionClass="NSMutableArray" id="hEA-S2-DPb"/>
+                        <outletCollection property="tasksButton" destination="ltG-5C-qmz" collectionClass="NSMutableArray" id="DVy-Qz-AsU"/>
+                        <outletCollection property="tasksButton" destination="jug-a0-R3x" collectionClass="NSMutableArray" id="hUc-hx-fYe"/>
                     </connections>
                 </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="s01-tZ-LlE" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="550" y="-195"/>
+            <point key="canvasLocation" x="458" y="-195"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="IqL-ua-JWe">
@@ -68,12 +68,12 @@
                     </navigationBar>
                     <nil name="viewControllers"/>
                     <connections>
-                        <segue destination="BYZ-38-t0r" kind="relationship" relationship="rootViewController" id="NJQ-Yb-May"/>
+                        <segue destination="3la-0h-9Bf" kind="relationship" relationship="rootViewController" id="Dri-zO-WNM"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="SRp-u7-c9K" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-199.19999999999999" y="-194.75262368815595"/>
+            <point key="canvasLocation" x="-286" y="-197"/>
         </scene>
     </scenes>
 </document>

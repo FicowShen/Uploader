@@ -64,8 +64,8 @@ class TaskManager<T: Task> {
                 task.state = .working(progress)
                 observer.onNext((task, .working(progress)))
             }, onError: { [weak self] (error) in
-                task.state = .fail(NSError.makeError(message: "upload failed"))
-                observer.onNext((task, .fail(NSError.makeError(message: "upload failed"))))
+                task.state = .failure(NSError.makeError(message: "upload failed"))
+                observer.onNext((task, .failure(NSError.makeError(message: "upload failed"))))
                 observer.onCompleted()
                 task.observable = nil
                 self?.taskFinished(task)

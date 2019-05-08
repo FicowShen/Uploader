@@ -12,7 +12,8 @@ PODS:
     - RxAtomic (~> 4.4)
 
 DEPENDENCIES:
-  - RxAlamofire
+  - Alamofire (~> 4.8.1)
+  - RxAlamofire (~> 4.3.0)
   - RxCocoa (~> 4.4.0)
   - RxSwift (~> 4.4.0)
 
@@ -31,6 +32,6 @@ SPEC CHECKSUMS:
   RxCocoa: df63ebf7b9a70d6b4eeea407ed5dd4efc8979749
   RxSwift: 5976ecd04fc2fefd648827c23de5e11157faa973
 
-PODFILE CHECKSUM: 7f5529e71ff6d059d3e4d9dc4a3d9ce937794cd0
+PODFILE CHECKSUM: daa0aa97013691c059bea2de4a7f77fc95689130
 
 COCOAPODS: 1.6.1

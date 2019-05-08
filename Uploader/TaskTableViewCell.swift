@@ -24,7 +24,16 @@ class TaskTableViewCell: UITableViewCell {
     }
 
     var disposeBag: DisposeBag!
-    
+
+    var scene: Scene? {
+        didSet {
+            guard let scene = scene, scene == .normalTask else { return }
+            iconView.superview?.isHidden = true
+            iconView.isHidden = true
+            indicatorView.stopAnimating()
+        }
+    }
+
     var order: Int = 0 {
         didSet {
             orderLabel.text = "任务 \(order)"
@@ -35,35 +44,46 @@ class TaskTableViewCell: UITableViewCell {
         didSet {
             guard let task = task else { return }
             disposeBag = DisposeBag()
-            updateViews(forTask: task)
+            updateLabels(forTask: task)
             updateColorForTaskState(task.state)
             updateImage(forTask: task)
 
             task.observable?
-                .subscribe(onNext: { [weak self] (info) in
-                    self?.updateViews(forTask: info.task)
-                    self?.updateColorForTaskState(info.state)
-                }, onError: { [weak self] (error) in
-                    self?.displayImage = nil
-                }, onCompleted: { [weak self, unowned task] in
-                    self?.updateImage(forTask: task)
+                .subscribe(onNext: { [unowned self] (info) in
+                    self.updateLabels(forTask: info.task)
+                    self.updateColorForTaskState(info.state)
+                }, onError: { [unowned self] (error) in
+                    self.displayImage = nil
+                }, onCompleted: { [unowned self, unowned task] in
+                    self.updateImage(forTask: task)
                 }).disposed(by: disposeBag)
         }
     }
 
-    private func updateViews(forTask task: Task) {
+    private func updateLabels(forTask task: Task) {
         idLabel.text = task.id
         stateLabel.text = task.state.description
     }
 
     private func updateImage(forTask task: Task) {
-        guard let task = task as? DownloadTask,
-            let data = task.data,
-            let image = UIImage(data: data) else {
+        switch task {
+        case let t as DownloadTask:
+            if let data = t.data {
+                displayImage = UIImage(data: data)
+            } else {
                 displayImage = nil
-                return
+            }
+        case let t as UploadTask:
+            if let _ = task.observable {
+                displayImage = nil
+            } else {
+                displayImage = UIImage(data: t.data)
+            }
+        case _ as MockTask:
+            break
+        default:
+            return
         }
-        displayImage = image
     }
     
     private func updateColorForTaskState(_ state: TaskState) {
@@ -78,7 +98,7 @@ class TaskTableViewCell: UITableViewCell {
         case .success:
             progressView.isHidden = true
             stateLabel.textColor = .green
-        case .fail:
+        case .failure:
             progressView.isHidden = true
             stateLabel.textColor = .red
         }

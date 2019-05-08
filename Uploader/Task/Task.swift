@@ -8,7 +8,7 @@ enum TaskState {
     case ready
     case working(_ progress: TaskProgress)
     case success
-    case fail(_ error: Error)
+    case failure(_ error: Error)
 
     var description: String {
         switch self {
@@ -18,13 +18,13 @@ enum TaskState {
             return "working"
         case .success:
             return "success"
-        case .fail:
+        case .failure:
             return "fail"
         }
     }
 }
 
-protocol TaskProtocol: Hashable {
+protocol TaskProtocol: class, Hashable {
     var id: String { get }
     var timeStamp: TimeInterval { get }
     var state: TaskState { get set }
@@ -34,6 +34,7 @@ protocol TaskProtocol: Hashable {
 }
 
 class Task: TaskProtocol {
+
     static func == (lhs: Task, rhs: Task) -> Bool {
         return lhs.hashValue == rhs.hashValue
     }
@@ -75,7 +76,7 @@ extension Collection where Self.Element: TaskProtocol {
                 switch task.state {
                 case .success:
                     increaseAndCheckTaskCount(isSuccess: true)
-                case .fail(_):
+                case .failure(_):
                     increaseAndCheckTaskCount(isSuccess: false)
                 default:
                     break
@@ -89,7 +90,7 @@ extension Collection where Self.Element: TaskProtocol {
                         switch element.state {
                         case .success:
                             increaseAndCheckTaskCount(isSuccess: true)
-                        case .fail(_):
+                        case .failure(_):
                             increaseAndCheckTaskCount(isSuccess: false)
                         default:
                             break
