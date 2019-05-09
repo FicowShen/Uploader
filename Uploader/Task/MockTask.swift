@@ -2,7 +2,7 @@ import Foundation
 import RxSwift
 
 final class MockTask: Task {
-    override func work() -> Observable<TaskProgress> {
+    override func start() -> Observable<TaskProgress> {
         let subject = PublishSubject<TaskProgress>()
         DispatchQueue.global().async {
             let observer = subject.asObserver()

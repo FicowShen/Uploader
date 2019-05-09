@@ -2,7 +2,6 @@ import Foundation
 import RxSwift
 
 typealias TaskProgress = (completedUnitCount: Int64, totalUnitCount: Int64)
-typealias TaskStateInfo = (task: Task, state: TaskState)
 
 enum TaskState {
     case ready
@@ -19,7 +18,7 @@ enum TaskState {
         case .success:
             return "success"
         case .failure:
-            return "fail"
+            return "failure"
         }
     }
 }
@@ -28,9 +27,9 @@ protocol TaskProtocol: class, Hashable {
     var id: String { get }
     var timeStamp: TimeInterval { get }
     var state: TaskState { get set }
-    var observable: Observable<TaskStateInfo>? { get set }
+    var observable: Observable<TaskState>? { get set }
 
-    func work() -> Observable<TaskProgress>
+    func start() -> Observable<TaskProgress>
 }
 
 class Task: TaskProtocol {
@@ -46,9 +45,9 @@ class Task: TaskProtocol {
     let id = UUID().uuidString
     let timeStamp: TimeInterval = Date().timeIntervalSince1970
     var state: TaskState = .ready
-    var observable: Observable<TaskStateInfo>?
+    var observable: Observable<TaskState>?
 
-    func work() -> Observable<TaskProgress> {
+    func start() -> Observable<TaskProgress> {
         fatalError("Implement your work in subclass.")
     }
 }
@@ -86,8 +85,8 @@ extension Collection where Self.Element: TaskProtocol {
             let disposable = observable
                 .subscribe({ (event) in
                     switch event {
-                    case .next(let element):
-                        switch element.state {
+                    case .next(let state):
+                        switch state {
                         case .success:
                             increaseAndCheckTaskCount(isSuccess: true)
                         case .failure(_):

@@ -13,7 +13,7 @@ final class DownloadTask: Task {
         self.request = request
     }
 
-    override func work() -> Observable<TaskProgress> {
+    override func start() -> Observable<TaskProgress> {
         let subject = PublishSubject<TaskProgress>()
         let observer = subject.asObserver()
         let bag = DisposeBag()

@@ -6,7 +6,7 @@ let mockImageURLs = ["https://cdn.dribbble.com/users/4859/screenshots/6425163/st
 
 let mockUploadURL = "https://www.googleapis.com/upload/drive/v2/files?uploadType=multipart"
 
-class TaskTableViewController: UITableViewController {
+final class TaskTableViewController: UITableViewController {
 
     var workingTasks: Observable<[Task]> {
         return _workingTasks.asObservable()
@@ -85,7 +85,9 @@ class TaskTableViewController: UITableViewController {
             case .uploadTask:
                 break
             }
-            let taskManager = TaskManager<Task>()
+
+            let queue = DispatchQueue(label: UUID().uuidString, qos: .background, attributes: .concurrent)
+            let taskManager = TaskManager<Task>.init(subscribeScheduler: ConcurrentDispatchQueueScheduler(queue: queue), observeScheduler: MainScheduler.instance)
             self.taskManager = taskManager
             mockTaskManagers[scene] = taskManager
             taskManager.addTasks(currentTasks)

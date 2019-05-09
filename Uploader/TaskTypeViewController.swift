@@ -8,7 +8,7 @@ enum Scene: String {
     case uploadTask = "Upload Task"
 }
 
-class TaskTypeViewController: UIViewController {
+final class TaskTypeViewController: UIViewController {
 
     @IBOutlet var tasksButton: [UIButton]!
     private let disposeBag = DisposeBag()

@@ -1,7 +1,7 @@
 import UIKit
 import RxSwift
 
-class TaskTableViewCell: UITableViewCell {
+final class TaskTableViewCell: UITableViewCell {
 
     static let ID = String(describing: TaskTableViewCell.self)
     
@@ -36,33 +36,27 @@ class TaskTableViewCell: UITableViewCell {
 
     var order: Int = 0 {
         didSet {
-            orderLabel.text = "任务 \(order)"
+            orderLabel.text = "Task \(order)"
         }
     }
     
     var task: Task? {
         didSet {
             guard let task = task else { return }
+            idLabel.text = task.id
             disposeBag = DisposeBag()
-            updateLabels(forTask: task)
             updateColorForTaskState(task.state)
             updateImage(forTask: task)
 
             task.observable?
-                .subscribe(onNext: { [unowned self] (info) in
-                    self.updateLabels(forTask: info.task)
-                    self.updateColorForTaskState(info.state)
+                .subscribe(onNext: { [unowned self] (state) in
+                    self.updateColorForTaskState(state)
                 }, onError: { [unowned self] (error) in
                     self.displayImage = nil
                 }, onCompleted: { [unowned self, unowned task] in
                     self.updateImage(forTask: task)
                 }).disposed(by: disposeBag)
         }
-    }
-
-    private func updateLabels(forTask task: Task) {
-        idLabel.text = task.id
-        stateLabel.text = task.state.description
     }
 
     private func updateImage(forTask task: Task) {
@@ -85,8 +79,13 @@ class TaskTableViewCell: UITableViewCell {
             return
         }
     }
+
+    private func showImage(forTask task: Task) {
+
+    }
     
     private func updateColorForTaskState(_ state: TaskState) {
+        stateLabel.text = state.description
         switch state {
         case .ready:
             progressView.isHidden = true

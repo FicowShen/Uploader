@@ -1,13 +1,14 @@
 import Foundation
 import RxSwift
 
-class TaskManager<T: Task> {
+final class TaskManager<T: TaskProtocol> {
 
-    var subscribeScheduler: SchedulerType = SerialDispatchQueueScheduler.init(qos: .userInitiated)
-    var observeScheduler: SchedulerType = MainScheduler.instance
     var maxWorkingTasksCount = 3
 
-    private var taskObservers = [T: AnyObserver<TaskStateInfo>]()
+    private let subscribeScheduler: SchedulerType
+    private let observeScheduler: SchedulerType
+
+    private var taskObservers = [T: AnyObserver<TaskState>]()
     private var readyTasks = [T]()
     private var workingTasks = [T: DisposeBag]()
     private var finishedTasks = [T]()
@@ -16,8 +17,13 @@ class TaskManager<T: Task> {
         return workingTasks.keys + readyTasks + finishedTasks
     }
 
+    init(subscribeScheduler: SchedulerType = ConcurrentDispatchQueueScheduler(qos: .background), observeScheduler: SchedulerType = MainScheduler.instance) {
+        self.subscribeScheduler = subscribeScheduler
+        self.observeScheduler = observeScheduler
+    }
+
     func addTask(_ task: T) {
-        let publishSubject = PublishSubject<TaskStateInfo>()
+        let publishSubject = PublishSubject<TaskState>()
         saveTask(task, observer: publishSubject.asObserver())
         task.observable = publishSubject.asObservable().share()
     }
@@ -26,7 +32,7 @@ class TaskManager<T: Task> {
         tasks.forEach { addTask($0) }
     }
 
-    private func saveTask(_ task: T, observer: AnyObserver<TaskStateInfo>) {
+    private func saveTask(_ task: T, observer: AnyObserver<TaskState>) {
         readyTasks.append(task)
         taskObservers[task] = observer
         putReadyTasksIntoWorkingQueue()
@@ -55,23 +61,23 @@ class TaskManager<T: Task> {
         workingTasks[task] = disposeBag
 
         task.state = .ready
-        observer.onNext((task, .ready))
+        observer.onNext(.ready)
 
-        task.work()
+        task.start()
             .subscribeOn(subscribeScheduler)
             .observeOn(observeScheduler)
             .subscribe(onNext: { (progress) in
                 task.state = .working(progress)
-                observer.onNext((task, .working(progress)))
+                observer.onNext(.working(progress))
             }, onError: { [weak self] (error) in
-                task.state = .failure(NSError.makeError(message: "upload failed"))
-                observer.onNext((task, .failure(NSError.makeError(message: "upload failed"))))
+                task.state = .failure(error)
+                observer.onNext(.failure(error))
                 observer.onCompleted()
                 task.observable = nil
                 self?.taskFinished(task)
             }, onCompleted: { [weak self] in
                 task.state = .success
-                observer.onNext((task, .success))
+                observer.onNext(.success)
                 task.observable = nil
                 observer.onCompleted()
                 self?.taskFinished(task)
