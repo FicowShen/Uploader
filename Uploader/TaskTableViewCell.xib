@@ -51,7 +51,7 @@
                                     <constraint firstAttribute="height" constant="4" identifier="progressViewHeight" id="bPS-fC-Mmr"/>
                                 </constraints>
                             </progressView>
-                            <stackView opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="752" alignment="top" translatesAutoresizingMaskIntoConstraints="NO" id="K3W-Xp-7PT" userLabel="StateContainer">
+                            <stackView opaque="NO" contentMode="scaleToFill" verticalCompressionResistancePriority="751" alignment="top" translatesAutoresizingMaskIntoConstraints="NO" id="K3W-Xp-7PT" userLabel="StateContainer">
                                 <rect key="frame" x="0.0" y="28" width="359" height="30"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" verticalCompressionResistancePriority="751" text="状态：" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="f76-NX-BBN">
@@ -74,13 +74,13 @@
                                     </label>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="30" id="ZIq-oO-wwF"/>
+                                    <constraint firstAttribute="height" priority="999" constant="30" id="ZIq-oO-wwF"/>
                                 </constraints>
                             </stackView>
                             <view contentMode="scaleToFill" verticalCompressionResistancePriority="752" translatesAutoresizingMaskIntoConstraints="NO" id="Veu-jM-dam">
                                 <rect key="frame" x="0.0" y="58" width="359" height="141.5"/>
                                 <subviews>
-                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="252" verticalHuggingPriority="251" verticalCompressionResistancePriority="752" translatesAutoresizingMaskIntoConstraints="NO" id="1tQ-Sr-asn">
+                                    <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="252" verticalCompressionResistancePriority="752" translatesAutoresizingMaskIntoConstraints="NO" id="1tQ-Sr-asn">
                                         <rect key="frame" x="0.0" y="0.0" width="359" height="141.5"/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
@@ -116,6 +116,7 @@
             <connections>
                 <outlet property="iconView" destination="1tQ-Sr-asn" id="91q-gM-OU7"/>
                 <outlet property="idLabel" destination="502-Wi-uIz" id="Phl-F4-hc0"/>
+                <outlet property="imageViewHeightConstrait" destination="7Td-Jb-gaw" id="Ld4-jx-wXE"/>
                 <outlet property="indicatorView" destination="C1G-LN-jys" id="69r-Dk-eAQ"/>
                 <outlet property="orderLabel" destination="IQ3-uY-Nvr" id="HYM-gv-aex"/>
                 <outlet property="progressView" destination="Ak2-ze-RLi" id="DkA-n4-cIf"/>

@@ -12,6 +12,8 @@ final class TaskTableViewCell: UITableViewCell {
     @IBOutlet weak var iconView: UIImageView!
     @IBOutlet weak var indicatorView: UIActivityIndicatorView!
 
+    @IBOutlet weak var imageViewHeightConstrait: NSLayoutConstraint!
+
     private var displayImage: UIImage? {
         didSet {
             iconView.image = displayImage
@@ -24,15 +26,6 @@ final class TaskTableViewCell: UITableViewCell {
     }
 
     var disposeBag: DisposeBag!
-
-    var scene: Scene? {
-        didSet {
-            guard let scene = scene, scene == .normalTask else { return }
-            iconView.superview?.isHidden = true
-            iconView.isHidden = true
-            indicatorView.stopAnimating()
-        }
-    }
 
     var order: Int = 0 {
         didSet {
@@ -55,7 +48,8 @@ final class TaskTableViewCell: UITableViewCell {
                     self.displayImage = nil
                 }, onCompleted: { [unowned self, unowned task] in
                     self.updateImage(forTask: task)
-                }).disposed(by: disposeBag)
+                })
+                .disposed(by: disposeBag)
         }
     }
 
@@ -63,7 +57,7 @@ final class TaskTableViewCell: UITableViewCell {
         switch task {
         case let t as DownloadTask:
             if let data = t.data {
-                displayImage = UIImage(data: data)
+                showImage(fromData: data)
             } else {
                 displayImage = nil
             }
@@ -71,7 +65,7 @@ final class TaskTableViewCell: UITableViewCell {
             if let _ = task.observable {
                 displayImage = nil
             } else {
-                displayImage = UIImage(data: t.data)
+                showImage(fromData: t.data)
             }
         case _ as MockTask:
             break
@@ -80,8 +74,14 @@ final class TaskTableViewCell: UITableViewCell {
         }
     }
 
-    private func showImage(forTask task: Task) {
-
+    private func showImage(fromData data: Data) {
+        Observable.just(UIImage(data: data))
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .userInitiated))
+            .asDriver(onErrorJustReturn: nil)
+            .drive(onNext: { [unowned self] (image) in
+                self.displayImage = image
+            })
+            .disposed(by: disposeBag)
     }
     
     private func updateColorForTaskState(_ state: TaskState) {
@@ -107,6 +107,13 @@ final class TaskTableViewCell: UITableViewCell {
         super.prepareForReuse()
         disposeBag = nil
         iconView.image = nil
+    }
+
+    override func updateConstraints() {
+        defer { super.updateConstraints() }
+        guard let _ = task as? MockTask else { return }
+        imageViewHeightConstrait.constant = 0
+        super.updateConstraints()
     }
 
 }

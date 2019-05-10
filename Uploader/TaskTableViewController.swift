@@ -87,7 +87,7 @@ final class TaskTableViewController: UITableViewController {
             }
 
             let queue = DispatchQueue(label: UUID().uuidString, qos: .background, attributes: .concurrent)
-            let taskManager = TaskManager<Task>.init(subscribeScheduler: ConcurrentDispatchQueueScheduler(queue: queue), observeScheduler: MainScheduler.instance)
+            let taskManager = TaskManager<Task>(subscribeScheduler: ConcurrentDispatchQueueScheduler(queue: queue), observeScheduler: MainScheduler.instance)
             self.taskManager = taskManager
             mockTaskManagers[scene] = taskManager
             taskManager.addTasks(currentTasks)
@@ -111,7 +111,8 @@ final class TaskTableViewController: UITableViewController {
                 default:
                     break
                 }
-            }.disposed(by: disposeBag)
+            }
+            .disposed(by: disposeBag)
     }
 
     private func groupTaskDidFinish(_ info: (successCount: Int, failureCount: Int)) {
@@ -120,18 +121,19 @@ final class TaskTableViewController: UITableViewController {
 
     private func upload(image: UIImage) {
         guard let url = URL.init(string: mockUploadURL) else { return }
-        Observable.just(image.jpegData(compressionQuality: 1))
-            .subscribeOn(ConcurrentDispatchQueueScheduler(qos: .userInitiated))
-            .observeOn(MainScheduler.instance)
-            .subscribe(onNext: { [unowned self] (data) in
+        Observable.just(image.jpegData(compressionQuality: 0.7))
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .userInitiated))
+            .asDriver(onErrorJustReturn: nil)
+            .drive(onNext: { [unowned self] (data) in
                 guard let data = data else { return }
-                var request = URLRequest.init(url: url)
+                var request = URLRequest(url: url)
                 request.httpMethod = "POST"
                 let task = UploadTask(request: request, data: data)
                 self.currentTasks.append(task)
                 self.tableView.reloadData()
                 self.taskManager?.addTask(task)
-            }).disposed(by: disposeBag)
+            })
+            .disposed(by: disposeBag)
     }
 
     // MARK: - Table view data source
@@ -143,16 +145,9 @@ final class TaskTableViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: TaskTableViewCell.ID, for: indexPath) as? TaskTableViewCell
             else { fatalError() }
-        cell.scene = self.scene
-        return cell
-    }
-
-    override func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-
-        guard let cell = cell as? TaskTableViewCell
-            else { fatalError() }
         cell.order = indexPath.row + 1
         cell.task = currentTasks[indexPath.row]
+        return cell
     }
 
 }

@@ -54,49 +54,35 @@ class Task: TaskProtocol {
 
 extension Collection where Self.Element: TaskProtocol {
     var groupObservable: Observable<(successCount: Int, failureCount: Int)> {
+
         let subject = PublishSubject<(successCount: Int, failureCount: Int)>()
         var disposables = [Disposable]()
         var successCount = 0
         var failureCount = 0
-        func increaseAndCheckTaskCount(isSuccess: Bool) {
-            if isSuccess {
+
+        func count(forState state: TaskState) {
+            switch state {
+            case .success:
                 successCount += 1
-            } else {
+            case .failure(_):
                 failureCount += 1
+            default:
+                break
             }
             guard (successCount + failureCount) == self.count else { return }
             subject.onNext((successCount, failureCount))
             subject.onCompleted()
-            disposables.forEach { $0.dispose() }
         }
+
         self.forEach { (task) in
             guard let observable = task.observable else {
                 // task has been finished
-                switch task.state {
-                case .success:
-                    increaseAndCheckTaskCount(isSuccess: true)
-                case .failure(_):
-                    increaseAndCheckTaskCount(isSuccess: false)
-                default:
-                    break
-                }
+                count(forState: task.state)
                 return
             }
             let disposable = observable
-                .subscribe({ (event) in
-                    switch event {
-                    case .next(let state):
-                        switch state {
-                        case .success:
-                            increaseAndCheckTaskCount(isSuccess: true)
-                        case .failure(_):
-                            increaseAndCheckTaskCount(isSuccess: false)
-                        default:
-                            break
-                        }
-                    default:
-                        break
-                    }
+                .subscribe(onNext: { (state) in
+                    count(forState: state)
                 })
             disposables.append(disposable)
         }

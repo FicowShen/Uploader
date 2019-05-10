@@ -81,7 +81,8 @@ final class TaskManager<T: TaskProtocol> {
                 task.observable = nil
                 observer.onCompleted()
                 self?.taskFinished(task)
-            }).disposed(by: disposeBag)
+            })
+            .disposed(by: disposeBag)
     }
 
     private func taskFinished(_ task: T) {

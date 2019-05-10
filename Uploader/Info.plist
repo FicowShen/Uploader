@@ -7,7 +7,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Load photo to test functions!</string>
 	<key>CFBundleDevelopmentRegion</key>
-	<string>zh_CN</string>
+	<string>en_US</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
