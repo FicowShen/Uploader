@@ -9,6 +9,6 @@ final class DownloadTask: Task {
         self.request = request
     }
 
-    override func start() {
+    override func start(scheduler: TaskStateObserver) {
     }
 }

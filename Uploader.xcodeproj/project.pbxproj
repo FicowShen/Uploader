@@ -12,13 +12,14 @@
 		6AA9E341224793720064D799 /* TaskTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 6AA9E33F224793720064D799 /* TaskTableViewCell.xib */; };
 		6B63954DB043850AF2146611 /* Pods_UploaderTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3FB5C142838D3AD99F677111 /* Pods_UploaderTests.framework */; };
 		891B3DED22609C0500837D55 /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = 891B3DEC22609C0500837D55 /* Task.swift */; };
-		8927F6412254A7E7009B23BB /* TaskManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8927F6402254A7E7009B23BB /* TaskManager.swift */; };
+		8927F6412254A7E7009B23BB /* TaskScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8927F6402254A7E7009B23BB /* TaskScheduler.swift */; };
 		8933F65723210EBF0052FB21 /* Atomic.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8933F65623210EBF0052FB21 /* Atomic.swift */; };
 		8954EEEE2249C65100976628 /* Tools.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8954EEED2249C65100976628 /* Tools.swift */; };
 		89D3FDFA22560ACE002C9C6F /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89D3FDF922560ACE002C9C6F /* Extensions.swift */; };
 		89DD7A782269DB9A00AFDE4E /* MockTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89DD7A772269DB9A00AFDE4E /* MockTask.swift */; };
 		89DD7A7A2269DC1400AFDE4E /* UploadTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89DD7A792269DC1400AFDE4E /* UploadTask.swift */; };
 		89DD7A7D2269DE0C00AFDE4E /* DownloadTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89DD7A7C2269DE0C00AFDE4E /* DownloadTask.swift */; };
+		89F16BB023263C0A006B9B11 /* GroupTaskCountObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89F16BAF23263C0A006B9B11 /* GroupTaskCountObserver.swift */; };
 		89F215982244B8B8006675F7 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89F215972244B8B8006675F7 /* AppDelegate.swift */; };
 		89F2159A2244B8B8006675F7 /* TaskTypeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89F215992244B8B8006675F7 /* TaskTypeViewController.swift */; };
 		89F2159D2244B8B8006675F7 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 89F2159B2244B8B8006675F7 /* Main.storyboard */; };
@@ -59,13 +60,14 @@
 		6AA9E33F224793720064D799 /* TaskTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = TaskTableViewCell.xib; sourceTree = "<group>"; };
 		6C95FC1DBCD09BA82EC72783 /* Pods-UploaderTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-UploaderTests.debug.xcconfig"; path = "Target Support Files/Pods-UploaderTests/Pods-UploaderTests.debug.xcconfig"; sourceTree = "<group>"; };
 		891B3DEC22609C0500837D55 /* Task.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
-		8927F6402254A7E7009B23BB /* TaskManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskManager.swift; sourceTree = "<group>"; };
+		8927F6402254A7E7009B23BB /* TaskScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskScheduler.swift; sourceTree = "<group>"; };
 		8933F65623210EBF0052FB21 /* Atomic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Atomic.swift; sourceTree = "<group>"; };
 		8954EEED2249C65100976628 /* Tools.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tools.swift; sourceTree = "<group>"; };
 		89D3FDF922560ACE002C9C6F /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		89DD7A772269DB9A00AFDE4E /* MockTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockTask.swift; sourceTree = "<group>"; };
 		89DD7A792269DC1400AFDE4E /* UploadTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadTask.swift; sourceTree = "<group>"; };
 		89DD7A7C2269DE0C00AFDE4E /* DownloadTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DownloadTask.swift; sourceTree = "<group>"; };
+		89F16BAF23263C0A006B9B11 /* GroupTaskCountObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GroupTaskCountObserver.swift; sourceTree = "<group>"; };
 		89F215942244B8B8006675F7 /* Uploader.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Uploader.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		89F215972244B8B8006675F7 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		89F215992244B8B8006675F7 /* TaskTypeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TaskTypeViewController.swift; sourceTree = "<group>"; };
@@ -162,12 +164,12 @@
 			path = Atomic;
 			sourceTree = "<group>";
 		};
-		89DD7A7B2269DC9500AFDE4E /* TaskManager */ = {
+		89DD7A7B2269DC9500AFDE4E /* TaskScheduler */ = {
 			isa = PBXGroup;
 			children = (
-				8927F6402254A7E7009B23BB /* TaskManager.swift */,
+				8927F6402254A7E7009B23BB /* TaskScheduler.swift */,
 			);
-			path = TaskManager;
+			path = TaskScheduler;
 			sourceTree = "<group>";
 		};
 		89F2158B2244B8B8006675F7 = {
@@ -196,7 +198,7 @@
 			isa = PBXGroup;
 			children = (
 				8933F65523210EB40052FB21 /* Atomic */,
-				89DD7A7B2269DC9500AFDE4E /* TaskManager */,
+				89DD7A7B2269DC9500AFDE4E /* TaskScheduler */,
 				891B3DEB22609BE900837D55 /* Task */,
 				6AA9E342224793AF0064D799 /* Supporting Files */,
 				89F215A32244B8B9006675F7 /* Info.plist */,
@@ -208,6 +210,7 @@
 				89F2159B2244B8B8006675F7 /* Main.storyboard */,
 				8954EEED2249C65100976628 /* Tools.swift */,
 				89D3FDF922560ACE002C9C6F /* Extensions.swift */,
+				89F16BAF23263C0A006B9B11 /* GroupTaskCountObserver.swift */,
 			);
 			path = Uploader;
 			sourceTree = "<group>";
@@ -241,7 +244,6 @@
 				89F215902244B8B8006675F7 /* Sources */,
 				89F215912244B8B8006675F7 /* Frameworks */,
 				89F215922244B8B8006675F7 /* Resources */,
-				A9B390C83575CDA89E9D4EB3 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -428,36 +430,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		A9B390C83575CDA89E9D4EB3 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Uploader/Pods-Uploader-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
-				"${BUILT_PRODUCTS_DIR}/RxAlamofire/RxAlamofire.framework",
-				"${BUILT_PRODUCTS_DIR}/RxAtomic/RxAtomic.framework",
-				"${BUILT_PRODUCTS_DIR}/RxCocoa/RxCocoa.framework",
-				"${BUILT_PRODUCTS_DIR}/RxSwift/RxSwift.framework",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxAlamofire.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxAtomic.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxCocoa.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RxSwift.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Uploader/Pods-Uploader-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -470,7 +442,8 @@
 				891B3DED22609C0500837D55 /* Task.swift in Sources */,
 				89F215982244B8B8006675F7 /* AppDelegate.swift in Sources */,
 				8933F65723210EBF0052FB21 /* Atomic.swift in Sources */,
-				8927F6412254A7E7009B23BB /* TaskManager.swift in Sources */,
+				89F16BB023263C0A006B9B11 /* GroupTaskCountObserver.swift in Sources */,
+				8927F6412254A7E7009B23BB /* TaskScheduler.swift in Sources */,
 				6AA9E340224793720064D799 /* TaskTableViewCell.swift in Sources */,
 				8954EEEE2249C65100976628 /* Tools.swift in Sources */,
 				89DD7A7D2269DE0C00AFDE4E /* DownloadTask.swift in Sources */,

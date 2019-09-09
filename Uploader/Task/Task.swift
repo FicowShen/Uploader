@@ -22,6 +22,10 @@ enum TaskState {
     }
 }
 
+protocol TaskStateObserver: class {
+    func taskStateDidChange<Task: TaskProtocol>(_ task: Task, state: TaskState)
+}
+
 protocol TaskStateDelegate: class {
     func taskStateDidChange<Task: TaskProtocol>(_ task: Task)
 }
@@ -31,8 +35,9 @@ protocol TaskProtocol: class, Hashable {
     var timeStamp: TimeInterval { get }
     var state: Atomic<TaskState> { get }
     var delegate: TaskStateDelegate? { get set }
+    var groupId: String? { get }
 
-    func start()
+    func start(scheduler: TaskStateObserver)
 }
 
 extension TaskProtocol {
@@ -50,8 +55,11 @@ class Task: TaskProtocol {
     let timeStamp: TimeInterval = Date().timeIntervalSince1970
     let state: Atomic<TaskState> = Atomic(.ready)
     weak var delegate: TaskStateDelegate?
+    var groupId: String?
 
-    func start() {
+    init() {}
+
+    func start(scheduler: TaskStateObserver) {
         fatalError("Implement your work in subclass.")
     }
 }

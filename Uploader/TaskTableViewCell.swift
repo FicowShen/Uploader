@@ -33,6 +33,7 @@ final class TaskTableViewCell: UITableViewCell {
     var task: Task? {
         didSet {
             guard let task = task else { return }
+            task.delegate = self
             idLabel.text = task.id
             updateColorForTaskState(task.state.value)
             updateImage(forTask: task)
@@ -101,5 +102,14 @@ final class TaskTableViewCell: UITableViewCell {
         imageViewHeightConstrait.constant = 0
         super.updateConstraints()
     }
+
+}
+
+extension TaskTableViewCell: TaskStateDelegate {
+    func taskStateDidChange<Task>(_ task: Task) where Task : TaskProtocol {
+        guard task === self.task else { return }
+        updateColorForTaskState(task.state.value)
+    }
+
 
 }

@@ -10,6 +10,6 @@ final class UploadTask: Task {
         self.data = data
     }
     
-    override func start() {
+    override func start(scheduler: TaskStateObserver) {
     }
 }

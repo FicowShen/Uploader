@@ -4,11 +4,11 @@ protocol TaskProgressSubscriber: class {
     func taskStateDidChange<Task: TaskProtocol>(_ task: Task)
 }
 
-protocol GroupTaskProgressSubscriber: class {
+protocol GroupTaskProgressObserver: class {
     func groupTaskStateDidChange<Task: TaskProtocol>(_ tasks: [Task])
 }
 
-final class TaskManager<Task: TaskProtocol> {
+final class TaskScheduler<Task: TaskProtocol> {
 
     var maxWorkingTasksCount: Atomic<Int> = Atomic<Int>(3)
 
@@ -16,14 +16,14 @@ final class TaskManager<Task: TaskProtocol> {
     private(set) var workingTasks = Atomic<Set<Task>>(Set())
     private(set) var finishedTasks = Atomic<[Task]>([])
 
-    private var subscription = Atomic<NSMapTable<AnyObject, NSMutableSet>>(.weakToStrongObjects())
-
-    private let executeQueue: DispatchQueue
-    private let callbackQueue: DispatchQueue
-
     var allTasks: [Task] {
         return workingTasks.value + readyTasks.value + finishedTasks.value
     }
+
+    private var groupTaskSubscription = Atomic<NSMapTable<AnyObject, NSMutableSet>>(.weakToStrongObjects())
+
+    private let executeQueue: DispatchQueue
+    private let callbackQueue: DispatchQueue
 
     init(executeQueue: DispatchQueue = DispatchQueue(label: "TaskManagerQueue-" + UUID().uuidString), callbackQueue: DispatchQueue = .main) {
         self.executeQueue = executeQueue
@@ -42,24 +42,12 @@ final class TaskManager<Task: TaskProtocol> {
         tasks.forEach { addTask($0) }
     }
 
-    func subscribeTaskProgress(_ task: Task, subscriber: TaskProgressSubscriber) {
-        executeQueue.async {
-            if let subscribed = self.subscription.value.object(forKey: subscriber) {
-                subscribed.add(task)
-            } else {
-                self.subscription.value.setObject(NSMutableSet(array: [task]), forKey: subscriber)
-            }
-        }
+    func observeGroupTasks(_ tasks: [Task], observer: GroupTaskProgressObserver) {
+        groupTaskSubscription.value.setObject(NSMutableSet(array: tasks), forKey: observer)
     }
 
-    func unsubscribe(_ subscriber: TaskProgressSubscriber, task: Task?) {
-        executeQueue.async {
-            guard let task = task else {
-                self.subscription.value.setObject(nil, forKey: subscriber)
-                return
-            }
-            self.subscription.value.object(forKey: subscriber)?.remove(task)
-        }
+    func removeGroupTasksObserver(_ observer: GroupTaskProgressObserver) {
+        groupTaskSubscription.value.setObject(nil, forKey: observer)
     }
 
     private func runTaskIfNeeded() {
@@ -92,14 +80,16 @@ final class TaskManager<Task: TaskProtocol> {
     }
 
     private func notifySubscribersForTask<Task: TaskProtocol>(_ task: Task) {
-        guard let subscribers = subscription.value.keyEnumerator().allObjects as? [TaskProgressSubscriber]
-            else { return }
-        subscribers.forEach { (subscriber) in
-            guard let taskSet = subscription.value.object(forKey: subscriber),
+        callbackQueue.async {
+            task.delegate?.taskStateDidChange(task)
+        }
+        let groupTasksObserver = groupTaskSubscription.value.keyEnumerator().allObjects as? [GroupTaskProgressObserver]
+        groupTasksObserver?.forEach { (observer) in
+            guard let taskSet = groupTaskSubscription.value.object(forKey: observer) as? Set<Task>,
                 taskSet.contains(task)
                 else { return }
             callbackQueue.async {
-                subscriber.taskStateDidChange(task)
+                observer.groupTaskStateDidChange([Task].init(taskSet))
             }
         }
     }
@@ -107,8 +97,7 @@ final class TaskManager<Task: TaskProtocol> {
     private func startWork(_ task: Task) {
         workingTasks.value.insert(task)
         updateTaskState(task, state: .ready)
-        task.delegate = self
-        task.start()
+        task.start(scheduler: self)
     }
 
     private func taskDidFinish<Task: TaskProtocol>(_ task: Task) {
@@ -120,16 +109,15 @@ final class TaskManager<Task: TaskProtocol> {
     }
 }
 
-extension TaskManager: TaskStateDelegate {
-    func taskStateDidChange<Task: TaskProtocol>(_ task: Task) {
-        switch task.state.value {
-        case .success, .failure:
-            executeQueue.async { [weak self] in
-                guard let self = self else { return }
-                self.taskDidFinish(task)
+extension TaskScheduler: TaskStateObserver {
+    func taskStateDidChange<Task: TaskProtocol>(_ task: Task, state: TaskState) {
+        executeQueue.async { [weak self] in
+            switch state {
+            case .success, .failure:
+                self?.taskDidFinish(task)
+            default: break
             }
-        default: break
+            self?.notifySubscribersForTask(task)
         }
-        notifySubscribersForTask(task)
     }
 }

@@ -1,6 +1,6 @@
 import UIKit
 
-var mockTaskManagers = [Scene: TaskManager<Task>]()
+var mockTaskManagers = [Scene: TaskScheduler<Task>]()
 let mockImageURLs = ["https://cdn.dribbble.com/users/4859/screenshots/6425163/story-1-1600-1200.png", "https://cdn.dribbble.com/users/14268/screenshots/6426256/cpin2.png", "https://img.zcool.cn/community/0107a55cb46cc2a801208f8b40ac5a.jpg@1280w_1l_2o_100sh.jpg", "https://img.zcool.cn/community/0176625cb46cc2a801214168eee26a.jpg@1280w_1l_2o_100sh.jpg", "https://img.zcool.cn/community/0139865cb46cc2a801208f8b3977da.jpg@1280w_1l_2o_100sh.jpg", "https://img.zcool.cn/community/0115875cb46cc2a8012141682c955a.jpg@1280w_1l_2o_100sh.jpg"]
 
 let mockUploadURL = "https://www.googleapis.com/upload/drive/v2/files?uploadType=multipart"
@@ -9,8 +9,10 @@ final class TaskTableViewController: UITableViewController {
 
     private let scene: Scene
 
-    private var taskManager: TaskManager<Task>?
-    private var currentTasks = [Task]()
+    private var taskManager: TaskScheduler<Task>?
+    private(set) var currentTasks = [Task]()
+
+    private var rowsToReload = Set<Int>()
 
     private lazy var picker: UIImagePickerController = {
         let picker = UIImagePickerController()
@@ -53,19 +55,16 @@ final class TaskTableViewController: UITableViewController {
             if !currentTasks.isEmpty {
                 currentTasks.sort { $0.timeStamp < $1.timeStamp }
                 observeGroupProgress()
-                currentTasks.forEach { (task) in
-                    self.taskManager?.subscribeTaskProgress(task, subscriber: self)
-                }
             }
         }
         guard let taskManager = mockTaskManagers[scene] else {
             switch scene {
             case .normalTask:
                 let failureError = NSError(domain: "com.ficow.Uploader", code: -1, userInfo: [NSLocalizedDescriptionKey: "Download failed!"])
-                (0..<6).forEach { (index) in
+                (0..<60).forEach { (index) in
                     let error = index.isMultiple(of: 2) ? failureError : nil
-                    let task = MockTask(delay: 1, failureError: error, progressUpdateDurationMaker: {
-                        return Double.random(in: 0...500) * Double.random(in: 0...0.0005)
+                    let task = MockTask(delay: 0.3, failureError: error, progressUpdateDurationMaker: {
+                        return Double.random(in: 100...1000) * 0.0006
                     })
                     currentTasks.append(task)
                 }
@@ -80,8 +79,7 @@ final class TaskTableViewController: UITableViewController {
             case .uploadTask:
                 break
             }
-
-            let taskManager = TaskManager<Task>()
+            let taskManager = TaskScheduler<Task>()
             self.taskManager = taskManager
             mockTaskManagers[scene] = taskManager
             taskManager.addTasks(currentTasks)
@@ -143,20 +141,10 @@ final class TaskTableViewController: UITableViewController {
         cell.task = currentTasks[indexPath.row]
         return cell
     }
-
-}
-
-extension TaskTableViewController: TaskProgressSubscriber {
-    func taskStateDidChange<Task>(_ task: Task) where Task : TaskProtocol {
-        guard let index = currentTasks.firstIndex(where: { $0.id == task.id })
-            else { return }
-        tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .none)
-    }
 }
 
 extension TaskTableViewController: UIImagePickerControllerDelegate & UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-
         defer { picker.dismiss(animated: true, completion: nil) }
         guard let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else { return }
         self.upload(image: image)

@@ -6,6 +6,8 @@ enum Scene: String {
     case uploadTask = "Upload Task"
 }
 
+var groupTaskObservers = [Scene: GroupTaskCountObserver]()
+
 final class TaskTypeViewController: UIViewController {
 
     @IBOutlet var tasksButton: [UIButton]!
@@ -32,30 +34,28 @@ final class TaskTypeViewController: UIViewController {
         guard let scene = Scene.init(rawValue: sender.currentTitle ?? "")
             else { fatalError() }
         let vc = TaskTableViewController.init(scene: scene)
-//        vc.workingTasks.subscribe { [unowned self] (event) in
-//            switch event {
-//            case .next(let tasks):
-//                self.observeWorkingTasks(tasks, forScene: scene)
-//            default: break
-//            }
-//        }.disposed(by: disposeBag)
+
+        let observer: GroupTaskCountObserver
+        if let oldObserver = groupTaskObservers[scene] {
+            observer = oldObserver
+        } else {
+            let newObserver = GroupTaskCountObserver(scene: scene, delegate: self)
+            groupTaskObservers[scene] = newObserver
+            observer = newObserver
+        }
+        mockTaskManagers[scene]?.observeGroupTasks(vc.currentTasks, observer: observer)
         navigationController?.pushViewController(vc, animated: true)
     }
 
-    private func observeWorkingTasks(_ tasks: [Task], forScene scene: Scene) {
-//        tasks
-//            .groupObservable
-//            .subscribe { [weak self] (event) in
-//                switch event {
-//                case .next(let info):
-//                    self?.groupTaskDidFinish(info, forScene: scene)
-//                default: break
-//                }
-//            }.disposed(by: disposeBag)
-    }
 
     private func groupTaskDidFinish(_ info: (successCount: Int, failureCount: Int), forScene scene: Scene) {
         showGroupTaskNotification(groupID: scene.rawValue, successCount: info.successCount, failureCount: info.failureCount)
     }
 
+}
+
+extension TaskTypeViewController: GroupTaskCountObserverDelegate {
+    func groupTaskDidFinish(observer: GroupTaskCountObserver, successCount: Int, failureCount: Int) {
+        groupTaskDidFinish((successCount: successCount, failureCount: failureCount), forScene: observer.scene)
+    }
 }
