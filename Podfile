@@ -6,10 +6,6 @@ target 'Uploader' do
   use_frameworks!
 
   # Pods for Uploader
-  pod 'RxSwift', '~> 4.4.0'
-  pod 'RxCocoa', '~> 4.4.0'
-  pod 'Alamofire', '~> 4.8.1'
-  pod 'RxAlamofire', '~> 4.3.0'
 
 
   target 'UploaderTests' do

@@ -1,5 +1,4 @@
 import UIKit
-import RxSwift
 
 final class TaskTableViewCell: UITableViewCell {
 
@@ -25,8 +24,6 @@ final class TaskTableViewCell: UITableViewCell {
         }
     }
 
-    var disposeBag: DisposeBag!
-
     var order: Int = 0 {
         didSet {
             orderLabel.text = "Task \(order)"
@@ -37,19 +34,8 @@ final class TaskTableViewCell: UITableViewCell {
         didSet {
             guard let task = task else { return }
             idLabel.text = task.id
-            disposeBag = DisposeBag()
-            updateColorForTaskState(task.state)
+            updateColorForTaskState(task.state.value)
             updateImage(forTask: task)
-
-            task.observable?
-                .subscribe(onNext: { [unowned self] (state) in
-                    self.updateColorForTaskState(state)
-                }, onError: { [unowned self] (error) in
-                    self.displayImage = nil
-                }, onCompleted: { [unowned self, unowned task] in
-                    self.updateImage(forTask: task)
-                })
-                .disposed(by: disposeBag)
         }
     }
 
@@ -62,10 +48,11 @@ final class TaskTableViewCell: UITableViewCell {
                 displayImage = nil
             }
         case let t as UploadTask:
-            if let _ = task.observable {
-                displayImage = nil
-            } else {
+            switch task.state.value {
+            case .success:
                 showImage(fromData: t.data)
+            default:
+                displayImage = nil
             }
         case _ as MockTask:
             break
@@ -75,13 +62,13 @@ final class TaskTableViewCell: UITableViewCell {
     }
 
     private func showImage(fromData data: Data) {
-        Observable.just(UIImage(data: data))
-            .subscribeOn(SerialDispatchQueueScheduler(qos: .userInitiated))
-            .asDriver(onErrorJustReturn: nil)
-            .drive(onNext: { [unowned self] (image) in
-                self.displayImage = image
-            })
-            .disposed(by: disposeBag)
+//        Observable.just(UIImage(data: data))
+//            .subscribeOn(SerialDispatchQueueScheduler(qos: .userInitiated))
+//            .asDriver(onErrorJustReturn: nil)
+//            .drive(onNext: { [unowned self] (image) in
+//                self.displayImage = image
+//            })
+//            .disposed(by: disposeBag)
     }
     
     private func updateColorForTaskState(_ state: TaskState) {
@@ -105,7 +92,6 @@ final class TaskTableViewCell: UITableViewCell {
 
     override func prepareForReuse() {
         super.prepareForReuse()
-        disposeBag = nil
         iconView.image = nil
     }
 

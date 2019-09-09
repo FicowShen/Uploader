@@ -1,6 +1,4 @@
 import UIKit
-import RxSwift
-import RxCocoa
 
 enum Scene: String {
     case normalTask = "Normal Task"
@@ -11,15 +9,12 @@ enum Scene: String {
 final class TaskTypeViewController: UIViewController {
 
     @IBOutlet var tasksButton: [UIButton]!
-    private let disposeBag = DisposeBag()
 
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        tasksButton.forEach { (button) in
-            button.rx.tap.subscribe({ [unowned self] (_) in
-                self.buttonTapped(button)
-            }).disposed(by: disposeBag)
+        tasksButton.forEach { [unowned self] (button) in
+            button.addTarget(self, action: #selector(buttonTapped(_:)), for: .touchUpInside)
         }
     }
     
@@ -33,30 +28,30 @@ final class TaskTypeViewController: UIViewController {
         navigationController?.setNavigationBarHidden(false, animated: animated)
     }
 
-    private func buttonTapped(_ sender: UIButton) {
+    @objc private func buttonTapped(_ sender: UIButton) {
         guard let scene = Scene.init(rawValue: sender.currentTitle ?? "")
             else { fatalError() }
         let vc = TaskTableViewController.init(scene: scene)
-        vc.workingTasks.subscribe { [unowned self] (event) in
-            switch event {
-            case .next(let tasks):
-                self.observeWorkingTasks(tasks, forScene: scene)
-            default: break
-            }
-        }.disposed(by: disposeBag)
+//        vc.workingTasks.subscribe { [unowned self] (event) in
+//            switch event {
+//            case .next(let tasks):
+//                self.observeWorkingTasks(tasks, forScene: scene)
+//            default: break
+//            }
+//        }.disposed(by: disposeBag)
         navigationController?.pushViewController(vc, animated: true)
     }
 
     private func observeWorkingTasks(_ tasks: [Task], forScene scene: Scene) {
-        tasks
-            .groupObservable
-            .subscribe { [weak self] (event) in
-                switch event {
-                case .next(let info):
-                    self?.groupTaskDidFinish(info, forScene: scene)
-                default: break
-                }
-            }.disposed(by: disposeBag)
+//        tasks
+//            .groupObservable
+//            .subscribe { [weak self] (event) in
+//                switch event {
+//                case .next(let info):
+//                    self?.groupTaskDidFinish(info, forScene: scene)
+//                default: break
+//                }
+//            }.disposed(by: disposeBag)
     }
 
     private func groupTaskDidFinish(_ info: (successCount: Int, failureCount: Int), forScene scene: Scene) {

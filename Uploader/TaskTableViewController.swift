@@ -1,5 +1,4 @@
 import UIKit
-import RxSwift
 
 var mockTaskManagers = [Scene: TaskManager<Task>]()
 let mockImageURLs = ["https://cdn.dribbble.com/users/4859/screenshots/6425163/story-1-1600-1200.png", "https://cdn.dribbble.com/users/14268/screenshots/6426256/cpin2.png", "https://img.zcool.cn/community/0107a55cb46cc2a801208f8b40ac5a.jpg@1280w_1l_2o_100sh.jpg", "https://img.zcool.cn/community/0176625cb46cc2a801214168eee26a.jpg@1280w_1l_2o_100sh.jpg", "https://img.zcool.cn/community/0139865cb46cc2a801208f8b3977da.jpg@1280w_1l_2o_100sh.jpg", "https://img.zcool.cn/community/0115875cb46cc2a8012141682c955a.jpg@1280w_1l_2o_100sh.jpg"]
@@ -8,13 +7,7 @@ let mockUploadURL = "https://www.googleapis.com/upload/drive/v2/files?uploadType
 
 final class TaskTableViewController: UITableViewController {
 
-    var workingTasks: Observable<[Task]> {
-        return _workingTasks.asObservable()
-    }
-
-    private var _workingTasks = PublishSubject<[Task]>()
     private let scene: Scene
-    private let disposeBag = DisposeBag()
 
     private var taskManager: TaskManager<Task>?
     private var currentTasks = [Task]()
@@ -47,31 +40,33 @@ final class TaskTableViewController: UITableViewController {
 
         if scene == .uploadTask {
             let uploadButton = UIButton.init(type: .system)
+            uploadButton.addTarget(self, action: #selector(presentImagePicker), for: .touchUpInside)
             uploadButton.setTitle("Upload Photo", for: .normal)
             navigationItem.rightBarButtonItem = UIBarButtonItem(customView: uploadButton)
-            uploadButton.rx.tap.asDriver().drive(onNext: { [weak self] (_) in
-                self?.presentImagePicker()
-            }).disposed(by: disposeBag)
         }
 
         loadMockTasks()
     }
-
-
 
     private func loadMockTasks() {
         defer {
             if !currentTasks.isEmpty {
                 currentTasks.sort { $0.timeStamp < $1.timeStamp }
                 observeGroupProgress()
-                _workingTasks.onNext(currentTasks)
+                currentTasks.forEach { (task) in
+                    self.taskManager?.subscribeTaskProgress(task, subscriber: self)
+                }
             }
         }
         guard let taskManager = mockTaskManagers[scene] else {
             switch scene {
             case .normalTask:
+                let failureError = NSError(domain: "com.ficow.Uploader", code: -1, userInfo: [NSLocalizedDescriptionKey: "Download failed!"])
                 (0..<6).forEach { (index) in
-                    let task = MockTask()
+                    let error = index.isMultiple(of: 2) ? failureError : nil
+                    let task = MockTask(delay: 1, failureError: error, progressUpdateDurationMaker: {
+                        return Double.random(in: 0...500) * Double.random(in: 0...0.0005)
+                    })
                     currentTasks.append(task)
                 }
             case .downloadTask:
@@ -86,33 +81,32 @@ final class TaskTableViewController: UITableViewController {
                 break
             }
 
-            let queue = DispatchQueue(label: UUID().uuidString, qos: .background, attributes: .concurrent)
-            let taskManager = TaskManager<Task>(subscribeScheduler: ConcurrentDispatchQueueScheduler(queue: queue), observeScheduler: MainScheduler.instance)
+            let taskManager = TaskManager<Task>()
             self.taskManager = taskManager
             mockTaskManagers[scene] = taskManager
             taskManager.addTasks(currentTasks)
             return
         }
         self.taskManager = taskManager
-        currentTasks = taskManager.currentTasks
+        currentTasks = taskManager.allTasks
     }
 
-    private func presentImagePicker() {
+    @objc private func presentImagePicker() {
         present(picker, animated: true, completion: nil)
     }
 
     private func observeGroupProgress() {
-        currentTasks
-            .groupObservable
-            .subscribe { [weak self] (event) in
-                switch event {
-                case .next(let element):
-                    self?.groupTaskDidFinish(element)
-                default:
-                    break
-                }
-            }
-            .disposed(by: disposeBag)
+//        currentTasks
+//            .groupObservable
+//            .subscribe { [weak self] (event) in
+//                switch event {
+//                case .next(let element):
+//                    self?.groupTaskDidFinish(element)
+//                default:
+//                    break
+//                }
+//            }
+//            .disposed(by: disposeBag)
     }
 
     private func groupTaskDidFinish(_ info: (successCount: Int, failureCount: Int)) {
@@ -120,20 +114,20 @@ final class TaskTableViewController: UITableViewController {
     }
 
     private func upload(image: UIImage) {
-        guard let url = URL.init(string: mockUploadURL) else { return }
-        Observable.just(image.jpegData(compressionQuality: 0.7))
-            .subscribeOn(SerialDispatchQueueScheduler(qos: .userInitiated))
-            .asDriver(onErrorJustReturn: nil)
-            .drive(onNext: { [unowned self] (data) in
-                guard let data = data else { return }
-                var request = URLRequest(url: url)
-                request.httpMethod = "POST"
-                let task = UploadTask(request: request, data: data)
-                self.currentTasks.append(task)
-                self.tableView.reloadData()
-                self.taskManager?.addTask(task)
-            })
-            .disposed(by: disposeBag)
+//        guard let url = URL.init(string: mockUploadURL) else { return }
+//        Observable.just(image.jpegData(compressionQuality: 0.7))
+//            .subscribeOn(SerialDispatchQueueScheduler(qos: .userInitiated))
+//            .asDriver(onErrorJustReturn: nil)
+//            .drive(onNext: { [unowned self] (data) in
+//                guard let data = data else { return }
+//                var request = URLRequest(url: url)
+//                request.httpMethod = "POST"
+//                let task = UploadTask(request: request, data: data)
+//                self.currentTasks.append(task)
+//                self.tableView.reloadData()
+//                self.taskManager?.addTask(task)
+//            })
+//            .disposed(by: disposeBag)
     }
 
     // MARK: - Table view data source
@@ -150,6 +144,14 @@ final class TaskTableViewController: UITableViewController {
         return cell
     }
 
+}
+
+extension TaskTableViewController: TaskProgressSubscriber {
+    func taskStateDidChange<Task>(_ task: Task) where Task : TaskProtocol {
+        guard let index = currentTasks.firstIndex(where: { $0.id == task.id })
+            else { return }
+        tableView.reloadRows(at: [IndexPath(row: index, section: 0)], with: .none)
+    }
 }
 
 extension TaskTableViewController: UIImagePickerControllerDelegate & UINavigationControllerDelegate {

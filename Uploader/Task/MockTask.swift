@@ -1,24 +1,39 @@
 import Foundation
-import RxSwift
 
 final class MockTask: Task {
-    override func start() -> Observable<TaskProgress> {
-        let subject = PublishSubject<TaskProgress>()
-        DispatchQueue.global().async {
-            let observer = subject.asObserver()
-            let tryToFail = Bool.random()
-            let failNow = { Int.random(in: 0...10) < 3 }
-            for i in 0...100 {
-                Thread.sleep(forTimeInterval: TimeInterval(Int.random(in: 1...10)) * 0.01)
-                let taskProgress = (completedUnitCount: Int64(i), totalUnitCount: Int64(100))
-                observer.onNext(taskProgress)
-                if tryToFail && failNow() {
-                    observer.onError(NSError.makeError(message: "upload failed"))
-                    return
-                }
+
+    let stateUpdateDuration: TimeInterval
+    let failureError: NSError?
+    let progressUpdateDurationMaker: (() -> TimeInterval)
+
+    init(delay: TimeInterval, failureError: NSError?, progressUpdateDurationMaker: @escaping (() -> TimeInterval)) {
+        self.stateUpdateDuration = delay
+        self.failureError = failureError
+        self.progressUpdateDurationMaker = progressUpdateDurationMaker
+    }
+
+    override func start() {
+        let queue = DispatchQueue(label: "MockTaskQueue-" + UUID().uuidString)
+        updateState(.ready)
+        queue.asyncAfter(deadline: .now() + stateUpdateDuration) {
+            (0...100).forEach { (progress) in
+                self.updateState(.working(TaskProgress(completedUnitCount: Int64(progress), totalUnitCount: 100)))
+                Thread.sleep(forTimeInterval: self.progressUpdateDurationMaker())
             }
-            observer.onCompleted()
+            queue.asyncAfter(deadline: .now() + self.stateUpdateDuration) {
+                let state: TaskState
+                if let error = self.failureError {
+                    state = .failure(error)
+                } else {
+                    state = .success
+                }
+                self.updateState(state)
+            }
         }
-        return subject.asObservable()
+    }
+
+    private func updateState(_ state: TaskState) {
+        self.state.value = state
+        delegate?.taskStateDidChange(self)
     }
 }

@@ -1,5 +1,4 @@
 import Foundation
-import RxSwift
 
 typealias TaskProgress = (completedUnitCount: Int64, totalUnitCount: Int64)
 
@@ -23,69 +22,36 @@ enum TaskState {
     }
 }
 
+protocol TaskStateDelegate: class {
+    func taskStateDidChange<Task: TaskProtocol>(_ task: Task)
+}
+
 protocol TaskProtocol: class, Hashable {
     var id: String { get }
     var timeStamp: TimeInterval { get }
-    var state: TaskState { get set }
-    var observable: Observable<TaskState>? { get set }
+    var state: Atomic<TaskState> { get }
+    var delegate: TaskStateDelegate? { get set }
 
-    func start() -> Observable<TaskProgress>
+    func start()
 }
 
-class Task: TaskProtocol {
-
-    static func == (lhs: Task, rhs: Task) -> Bool {
+extension TaskProtocol {
+    static func == (lhs: Self, rhs: Self) -> Bool {
         return lhs.hashValue == rhs.hashValue
     }
 
     func hash(into hasher: inout Hasher) {
         hasher.combine(id.hashValue)
     }
-
-    let id = UUID().uuidString
-    let timeStamp: TimeInterval = Date().timeIntervalSince1970
-    var state: TaskState = .ready
-    var observable: Observable<TaskState>?
-
-    func start() -> Observable<TaskProgress> {
-        fatalError("Implement your work in subclass.")
-    }
 }
 
-extension Collection where Self.Element: TaskProtocol {
-    var groupObservable: Observable<(successCount: Int, failureCount: Int)> {
+class Task: TaskProtocol {
+    let id = UUID().uuidString
+    let timeStamp: TimeInterval = Date().timeIntervalSince1970
+    let state: Atomic<TaskState> = Atomic(.ready)
+    weak var delegate: TaskStateDelegate?
 
-        let subject = PublishSubject<(successCount: Int, failureCount: Int)>()
-        var disposables = [Disposable]()
-        var successCount = 0
-        var failureCount = 0
-
-        func count(forState state: TaskState) {
-            switch state {
-            case .success:
-                successCount += 1
-            case .failure(_):
-                failureCount += 1
-            default:
-                break
-            }
-            guard (successCount + failureCount) == self.count else { return }
-            subject.onNext((successCount, failureCount))
-            subject.onCompleted()
-        }
-
-        self.forEach { (task) in
-            guard let observable = task.observable else {
-                // task has been finished
-                count(forState: task.state)
-                return
-            }
-            let disposable = observable
-                .subscribe(onNext: { (state) in
-                    count(forState: state)
-                })
-            disposables.append(disposable)
-        }
-        return subject.asObservable()
+    func start() {
+        fatalError("Implement your work in subclass.")
     }
 }
