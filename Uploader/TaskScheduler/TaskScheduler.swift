@@ -1,7 +1,7 @@
 import Foundation
 
-protocol GroupTaskProgressObserver: class {
-    func groupTaskStateDidChange<Task: TaskProtocol>(_ task: Task, groupId: String)
+protocol GroupTaskCompletionObserver: class {
+    func groupTaskDidComplete<Task: TaskProtocol>(_ task: Task)
 }
 
 final class TaskScheduler<Task: TaskProtocol> {
@@ -38,11 +38,11 @@ final class TaskScheduler<Task: TaskProtocol> {
         tasks.forEach { addTask($0) }
     }
 
-    func observeGroupTasks(groupId: String, observer: GroupTaskProgressObserver) {
+    func observeGroupTaskCompletion(groupId: String, observer: GroupTaskCompletionObserver) {
         groupTaskSubscription.value.setObject(groupId as NSString, forKey: observer)
     }
 
-    func removeGroupTasksObserver(_ observer: GroupTaskProgressObserver) {
+    func removeGroupTaskObserver(_ observer: GroupTaskCompletionObserver) {
         groupTaskSubscription.value.setObject(nil, forKey: observer)
     }
 
@@ -80,16 +80,33 @@ final class TaskScheduler<Task: TaskProtocol> {
             task.delegate?.taskStateDidChange(task)
         }
 
-        let groupTasksObserver = groupTaskSubscription.value.keyEnumerator().allObjects as? [GroupTaskProgressObserver]
+        notifyGroupTaskCompletion(task)
+    }
+
+    private func notifyGroupTaskCompletion<Task: TaskProtocol>(_ task: Task) {
+
+        switch task.state.value {
+        case .ready, .working: return
+        default: break
+        }
+
+        guard let taskGroupId = task.groupId as NSString?,
+            let groupIds = groupTaskSubscription.value.objectEnumerator()?.allObjects as? [NSString],
+            groupIds.contains(taskGroupId) else {
+                return
+        }
+
+        let groupTasksObserver = groupTaskSubscription.value.keyEnumerator().allObjects as? [GroupTaskCompletionObserver]
         groupTasksObserver?.forEach { (observer) in
             guard let groupId = groupTaskSubscription.value.object(forKey: observer),
-                (groupId as String) == task.groupId
+                groupId == taskGroupId
                 else { return }
             callbackQueue.async {
-                observer.groupTaskStateDidChange(task, groupId: groupId as String)
+                observer.groupTaskDidComplete(task)
             }
         }
     }
+
 
     private func startWork(_ task: Task) {
         workingTasks.value.insert(task)

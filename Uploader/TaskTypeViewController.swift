@@ -38,17 +38,17 @@ final class TaskTypeViewController: UIViewController {
         if let oldObserver = groupTaskObservers[scene] {
             observer = oldObserver
         } else {
-            let newObserver = GroupTaskCountObserver(scene: scene, tasks: vc.currentTasks, delegate: self)
+            let newObserver = GroupTaskCountObserver(groupId: scene.rawValue, tasks: vc.currentTasks, delegate: self)
             groupTaskObservers[scene] = newObserver
             observer = newObserver
         }
         navigationController?.pushViewController(vc, animated: true)
-        mockTaskManagers[scene]?.observeGroupTasks(groupId: scene.rawValue, observer: observer)
+        mockTaskManagers[scene]?.observeGroupTaskCompletion(groupId: scene.rawValue, observer: observer)
     }
 }
 
 extension TaskTypeViewController: GroupTaskCountObserverDelegate {
     func groupTaskDidFinish(observer: GroupTaskCountObserver, successCount: Int, failureCount: Int) {
-        showGroupTaskNotification(groupID: observer.scene.rawValue, successCount: successCount, failureCount: failureCount)
+        showGroupTaskNotification(groupID: observer.groupId, successCount: successCount, failureCount: failureCount)
     }
 }
