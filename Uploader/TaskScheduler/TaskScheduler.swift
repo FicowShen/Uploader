@@ -1,11 +1,7 @@
 import Foundation
 
-protocol TaskProgressSubscriber: class {
-    func taskStateDidChange<Task: TaskProtocol>(_ task: Task)
-}
-
 protocol GroupTaskProgressObserver: class {
-    func groupTaskStateDidChange<Task: TaskProtocol>(_ tasks: [Task])
+    func groupTaskStateDidChange<Task: TaskProtocol>(_ task: Task, groupId: String)
 }
 
 final class TaskScheduler<Task: TaskProtocol> {
@@ -20,7 +16,7 @@ final class TaskScheduler<Task: TaskProtocol> {
         return workingTasks.value + readyTasks.value + finishedTasks.value
     }
 
-    private var groupTaskSubscription = Atomic<NSMapTable<AnyObject, NSMutableSet>>(.weakToStrongObjects())
+    private var groupTaskSubscription = Atomic<NSMapTable<AnyObject, NSString>>(.weakToStrongObjects())
 
     private let executeQueue: DispatchQueue
     private let callbackQueue: DispatchQueue
@@ -42,8 +38,8 @@ final class TaskScheduler<Task: TaskProtocol> {
         tasks.forEach { addTask($0) }
     }
 
-    func observeGroupTasks(_ tasks: [Task], observer: GroupTaskProgressObserver) {
-        groupTaskSubscription.value.setObject(NSMutableSet(array: tasks), forKey: observer)
+    func observeGroupTasks(groupId: String, observer: GroupTaskProgressObserver) {
+        groupTaskSubscription.value.setObject(groupId as NSString, forKey: observer)
     }
 
     func removeGroupTasksObserver(_ observer: GroupTaskProgressObserver) {
@@ -83,13 +79,14 @@ final class TaskScheduler<Task: TaskProtocol> {
         callbackQueue.async {
             task.delegate?.taskStateDidChange(task)
         }
+
         let groupTasksObserver = groupTaskSubscription.value.keyEnumerator().allObjects as? [GroupTaskProgressObserver]
         groupTasksObserver?.forEach { (observer) in
-            guard let taskSet = groupTaskSubscription.value.object(forKey: observer) as? Set<Task>,
-                taskSet.contains(task)
+            guard let groupId = groupTaskSubscription.value.object(forKey: observer),
+                (groupId as String) == task.groupId
                 else { return }
             callbackQueue.async {
-                observer.groupTaskStateDidChange([Task].init(taskSet))
+                observer.groupTaskStateDidChange(task, groupId: groupId as String)
             }
         }
     }

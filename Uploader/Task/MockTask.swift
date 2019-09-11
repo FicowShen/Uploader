@@ -8,11 +8,11 @@ final class MockTask: Task {
 
     private weak var scheduler: TaskStateObserver?
 
-    init(delay: TimeInterval, failureError: NSError?, progressUpdateDurationMaker: @escaping (() -> TimeInterval)) {
+    init(delay: TimeInterval, failureError: NSError?, groupId: String?, progressUpdateDurationMaker: @escaping (() -> TimeInterval)) {
         self.stateUpdateDuration = delay
         self.failureError = failureError
         self.progressUpdateDurationMaker = progressUpdateDurationMaker
-        super.init()
+        super.init(groupId: groupId)
     }
 
     override func start(scheduler: TaskStateObserver) {

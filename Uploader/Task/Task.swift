@@ -54,10 +54,12 @@ class Task: TaskProtocol {
     let id = UUID().uuidString
     let timeStamp: TimeInterval = Date().timeIntervalSince1970
     let state: Atomic<TaskState> = Atomic(.ready)
+    let groupId: String?
     weak var delegate: TaskStateDelegate?
-    var groupId: String?
 
-    init() {}
+    init(groupId: String? = nil) {
+        self.groupId = groupId
+    }
 
     func start(scheduler: TaskStateObserver) {
         fatalError("Implement your work in subclass.")

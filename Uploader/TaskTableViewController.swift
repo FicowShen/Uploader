@@ -7,8 +7,9 @@ let mockUploadURL = "https://www.googleapis.com/upload/drive/v2/files?uploadType
 
 final class TaskTableViewController: UITableViewController {
 
-    private let scene: Scene
+    weak var observer: GroupTaskCountObserver?
 
+    private let scene: Scene
     private var taskManager: TaskScheduler<Task>?
     private(set) var currentTasks = [Task]()
 
@@ -25,6 +26,8 @@ final class TaskTableViewController: UITableViewController {
         self.scene = scene
         super.init(style: .plain)
         self.title = scene.rawValue
+
+        loadMockTasks()
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -46,8 +49,6 @@ final class TaskTableViewController: UITableViewController {
             uploadButton.setTitle("Upload Photo", for: .normal)
             navigationItem.rightBarButtonItem = UIBarButtonItem(customView: uploadButton)
         }
-
-        loadMockTasks()
     }
 
     private func loadMockTasks() {
@@ -61,9 +62,9 @@ final class TaskTableViewController: UITableViewController {
             switch scene {
             case .normalTask:
                 let failureError = NSError(domain: "com.ficow.Uploader", code: -1, userInfo: [NSLocalizedDescriptionKey: "Download failed!"])
-                (0..<60).forEach { (index) in
+                (0..<6).forEach { (index) in
                     let error = index.isMultiple(of: 2) ? failureError : nil
-                    let task = MockTask(delay: 0.3, failureError: error, progressUpdateDurationMaker: {
+                    let task = MockTask(delay: 0.3, failureError: error, groupId: scene.rawValue, progressUpdateDurationMaker: {
                         return Double.random(in: 100...1000) * 0.0006
                     })
                     currentTasks.append(task)

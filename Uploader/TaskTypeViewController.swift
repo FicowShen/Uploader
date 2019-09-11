@@ -6,11 +6,10 @@ enum Scene: String {
     case uploadTask = "Upload Task"
 }
 
-var groupTaskObservers = [Scene: GroupTaskCountObserver]()
-
 final class TaskTypeViewController: UIViewController {
 
     @IBOutlet var tasksButton: [UIButton]!
+    var groupTaskObservers = [Scene: GroupTaskCountObserver]()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,23 +38,17 @@ final class TaskTypeViewController: UIViewController {
         if let oldObserver = groupTaskObservers[scene] {
             observer = oldObserver
         } else {
-            let newObserver = GroupTaskCountObserver(scene: scene, delegate: self)
+            let newObserver = GroupTaskCountObserver(scene: scene, tasks: vc.currentTasks, delegate: self)
             groupTaskObservers[scene] = newObserver
             observer = newObserver
         }
-        mockTaskManagers[scene]?.observeGroupTasks(vc.currentTasks, observer: observer)
         navigationController?.pushViewController(vc, animated: true)
+        mockTaskManagers[scene]?.observeGroupTasks(groupId: scene.rawValue, observer: observer)
     }
-
-
-    private func groupTaskDidFinish(_ info: (successCount: Int, failureCount: Int), forScene scene: Scene) {
-        showGroupTaskNotification(groupID: scene.rawValue, successCount: info.successCount, failureCount: info.failureCount)
-    }
-
 }
 
 extension TaskTypeViewController: GroupTaskCountObserverDelegate {
     func groupTaskDidFinish(observer: GroupTaskCountObserver, successCount: Int, failureCount: Int) {
-        groupTaskDidFinish((successCount: successCount, failureCount: failureCount), forScene: observer.scene)
+        showGroupTaskNotification(groupID: observer.scene.rawValue, successCount: successCount, failureCount: failureCount)
     }
 }
